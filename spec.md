@@ -5,11 +5,11 @@
 > **Một quyết định = bốn ý:** đã cân nhắc phương án nào · chọn phương án nào · vì sao · loại các phương án kia vì sao. Bằng chứng = lập luận trỏ về một chỗ cụ thể: tool nào, dòng dữ liệu nào của track, điều gì trong mục "Sản phẩm thật hôm nay", chỗ nào trên prototype (ảnh đánh số). Không chạy agent.
 
 
-# Bài nộp LAB5 — [Track] · Nhóm [tên]
+# Bài nộp LAB5 — T2 · Nhóm NhomABC
 | Họ và Tên | Mã Học Viên | Việc đã làm |
 |---|---|---|
 | Vũ Nguyễn Hoàng Minh | 2A202603541 | §5 Prototype (`prototype/index.html`: màn hình học viên + màn hình TA, chế độ Mock và AI thật OpenAI, ảnh đánh số) |
-| Nguyễn Tuấn Phong | 2A202603712 | §1 Lát cắt & phạm vi · §2 Kịch bản rủi ro (11 kịch bản, chọn 2 kịch bản đắt nhất) |
+| Nguyễn Tuấn Phong | 2A202603712 | §1 Lát cắt & phạm vi · §2 Kịch bản rủi ro (11 kịch bản, chọn 2 kịch bản đắt nhất) · §4 Mức tự chủ (4 tool, tách `dang_FAQ`, phiếu xếp mức, thử mức trên 3 kịch bản) |
 | Bùi Thế Anh | 2A202603546 | §3 Khi AI sai thì người dùng thấy gì |
 
 ## §1. Lát cắt & phạm vi
@@ -206,7 +206,7 @@ Các bước lưu trạng thái nguồn và soát gợi ý ở trên là **thi�
 | **Correction** | Nhánh sửa ở §3.2 và §3.3: nhận lỗi cụ thể, đánh dấu tin cũ, dừng hành vi gây hại, giữ đường học tiếp và bản xem trước gửi TA. |
 
 ## §4. Mức tự chủ  (chặng 4)
-Bối cảnh dùng cho mọi quyết định bên dưới: học viên hỏi sau 22:00, TA trả lời từ 08:00 sáng hôm sau, Bài tập 3 hết hạn 13/11/2026 23:59. Vì vậy "cần người duyệt" ban đêm nghĩa là **chờ ít nhất tới 08:00**. Mỗi mức bên dưới đều tính cả cái giá của việc chờ đó.
+Bối cảnh dùng cho mọi quyết định bên dưới: học viên hỏi sau 22:00, ca TA tiếp theo bắt đầu 08:00 sáng hôm sau (dữ liệu B chỉ có giờ làm việc, không có giờ phản hồi cam kết), Bài tập 3 hết hạn 13/11/2026 23:59. Vì vậy "cần người duyệt" ban đêm nghĩa là **chờ ít nhất tới 08:00**. Mỗi mức bên dưới đều tính cả cái giá của việc chờ đó.
 
 ### Bảng tổng hợp
 
@@ -214,7 +214,7 @@ Bối cảnh dùng cho mọi quyết định bên dưới: học viên hỏi sau
 |---|---|---|---|
 | `tra_cuu_tai_lieu` | **tự làm** | — | Chỉ đọc, kết quả luôn hiện kèm mã mục để học viên tự kiểm; chờ người thì mất toàn bộ giá trị lúc tối muộn |
 | `goi_y_bai_tap` | **tách theo trạng thái bài** (xem dưới) | TA (gợi ý sâu cho bài đang mở) | Gợi ý đã đọc thì không rút lại được (#8), nhưng chặn hết thì học viên kẹt lúc 23:00 bỏ bài |
-| `chuyen_TA` | **tự làm** | — | Sai thì TA chỉ nhận thừa một câu hỏi, rút lại được; không chuyển thì lỗi như #1 không ai biết |
+| `chuyen_TA` | **cần học viên xác nhận** (bản xem trước, xem §3.4) | Học viên | Nội dung gửi đi là của học viên; thêm một cú bấm không làm chậm gì, vì ca TA chỉ bắt đầu lúc 08:00 |
 | `dang_FAQ` | **tách 2 bước:** soạn = tự làm · đăng = **cần giảng viên duyệt** | Giảng viên (TA được duyệt câu không liên quan tài liệu sai) | Một câu sai đến cả lớp, gỡ được nhưng nhiều người đã đọc (#1); FAQ không gấp nên chờ duyệt gần như không mất gì |
 
 ### Từng tool
@@ -238,23 +238,30 @@ Bối cảnh dùng cho mọi quyết định bên dưới: học viên hỏi sau
 | Bài đang mở, gợi ý **sâu hơn bước đầu** | **cần TA duyệt** | AI soạn gợi ý vào hàng chờ của TA. TA thấy câu hỏi, gợi ý nháp, mã mục được trích và hạn bài, rồi sửa hoặc gửi |
 | Bài đang mở, **đáp số, xác nhận đúng/sai, viết hộ** (#7, #8) | **cấm** | Đọc rồi là chép được, không đảo lại được. Không có bước xác nhận nào chặn được, vì chính học viên là người muốn nhận |
 
-- **Gợi ý sâu không ai duyệt kịp thì sao:** gợi ý nằm trong hàng chờ, **không tự gửi**. Hỏi đêm 12/11 thì TA trả lời từ 08:00 ngày 13/11, vẫn còn khoảng 16 giờ trước hạn. Hỏi sau 22:00 ngày 13/11 thì gợi ý sâu không tới kịp. Nhóm chấp nhận cái giá này, và AI phải nói rõ ngay lúc đó: "gợi ý thêm cần TA xem, TA trả lời từ 08:00, sau hạn nộp".
+- **Gợi ý sâu không ai duyệt kịp thì sao:** gợi ý nằm trong hàng chờ, **không tự gửi**. Hỏi đêm 12/11 thì ca TA bắt đầu 08:00 ngày 13/11, vẫn còn khoảng 16 giờ trước hạn. Hỏi sau 22:00 ngày 13/11 thì gợi ý sâu không tới kịp. Nhóm chấp nhận cái giá này, và AI phải nói rõ ngay lúc đó: "gợi ý thêm cần TA xem; ca TA tiếp theo bắt đầu 08:00, sau hạn nộp".
 - **Luật nội dung cho mọi gợi ý của bài đang mở:**
   - không chứa con số là đáp án;
   - không nói đúng hay sai với con số học viên đưa ra;
   - không trích đoạn tài liệu chứa sẵn kết luận của câu hỏi. Ví dụ: câu "thường dùng cho dữ liệu lệch như **thu nhập**" ở §3.2 chính là đáp án câu (b), vì Bài tập 3 là lương.
 
-**3. `chuyen_TA`: tự làm**
-- **Sai thì ai chịu gì:** TA nhận một câu hỏi thừa, mất vài phút. Học viên không mất gì.
-- **Đảo được không:** được (theo bảng tool). Học viên thấy nội dung đã chuyển và có nút rút lại.
-- **Chờ người thì mất gì:** không chuyển thì lỗi #1 (tài liệu sai) không tới được giảng viên, và học viên khác tiếp tục học sai.
+**3. `chuyen_TA`: cần học viên xác nhận**
+- **Cách chạy:** AI tự **soạn** bản nháp: câu hỏi, đoạn tài liệu liên quan, chỗ học viên đang kẹt. Học viên xem trước, sửa hoặc huỷ, rồi bấm "Gửi TA". Chỉ phần hội thoại liên quan được gửi, không gửi toàn bộ lịch sử chat (§3.4).
+- **Sai thì ai chịu gì:**
+  - Chuyển nhầm thì TA nhận thừa một câu hỏi, mất vài phút.
+  - Cái giá thật nằm ở **nội dung gửi đi**. Ở #9, học viên kể "em ốm"; ở #8, tin nhắn có câu "em chép vào thôi". Gửi cho TA khi học viên chưa xem thì lộ chuyện riêng và gắn nhãn học viên.
+- **Đảo được không:** được (theo bảng tool), nhưng TA có thể đã đọc.
+- **Chờ người thì mất gì:** gần như không. Ca TA bắt đầu 08:00, nên một cú bấm lúc 23:00 không làm câu hỏi tới TA chậm hơn chút nào.
+- **Học viên không bấm thì sao:** câu hỏi không được chuyển. Riêng lỗi tài liệu (#1) vẫn tới được giảng viên qua `soan_FAQ` (mục 4), bằng một nháp ẩn danh. Vì vậy lỗi nguồn không phụ thuộc vào việc một học viên có bấm hay không.
 - **Luật kèm theo:**
-  - AI chỉ nói "đã chuyển cho TA" **sau khi tool trả về thành công**, kèm giờ TA trả lời (từ 08:00). Luật này chặn lỗi "hứa việc mình không làm được" (#9).
+  - AI chỉ nói "đã chuyển cho TA" **sau khi tool trả về thành công**, kèm giờ do tool báo. Luật này chặn lỗi "hứa việc mình không làm được" (#9).
   - Chuyển câu hỏi **không** có nghĩa là hứa kết quả: không hứa gia hạn, không hứa đáp án.
-- **Đã loại:** "cần học viên bấm xác nhận mỗi lần chuyển". Loại vì thêm một bước cho một việc rẻ và đảo được. Với lỗi tài liệu (#1), giảng viên cần biết dù học viên có bấm hay không.
+  - Không có tool nhắn giảng viên trực tiếp. Lỗi tài liệu đi qua TA, và **TA** chuyển cho giảng viên.
+- **Đã loại:**
+  - *Tự làm:* ban đầu được chọn vì việc chuyển rẻ và đảo được. Loại vì không xét tới nội dung riêng của học viên, và vì chờ một cú bấm thực tế không tốn gì.
+  - *Cấm:* học viên mất đường duy nhất tới người thật lúc tối muộn.
 
 **4. `dang_FAQ`: tách thành 2 tool**
-- **`soan_FAQ` (tool mới): tự làm.** AI soạn câu hỏi và câu trả lời vào hàng chờ của giảng viên. Cả lớp **chưa thấy** gì, nên sai cũng không tốn gì.
+- **`soan_FAQ` (tool mới): tự làm.** AI soạn câu hỏi và câu trả lời vào hàng chờ của giảng viên. Cả lớp **chưa thấy** gì, nên sai cũng không tốn gì. Nháp có cờ "tài liệu có thể sai" chỉ chứa đoạn tài liệu và chỗ mâu thuẫn (ví dụ §3.3 với phương sai 0,25), **không chứa tên hay tin nhắn của học viên**. Đây là đường để giảng viên biết lỗi nguồn ngay cả khi học viên không gửi TA.
 - **`dang_FAQ`: cần giảng viên duyệt.**
   - **Người duyệt thấy:** câu hỏi, câu trả lời nháp, đoạn tài liệu được trích kèm mã mục, số học viên đã hỏi câu tương tự, và cờ **"liên quan tài liệu có thể sai"** nếu có.
   - **Ai được duyệt:** câu có cờ đó thì chỉ giảng viên duyệt. Câu khác thì TA duyệt được.
@@ -270,12 +277,12 @@ Bối cảnh dùng cho mọi quyết định bên dưới: học viên hỏi sau
 
 **Phiếu xếp mức độc lập (5 phút, chưa bàn):**
 
-| Tool | Phong | ____ | ____ |
+| Tool | Phong | Thế Anh | Minh |
 |---|---|---|---|
-| `tra_cuu_tai_lieu` | | | |
-| `goi_y_bai_tap` | | | |
-| `chuyen_TA` | | | |
-| `dang_FAQ` | | | |
+| `tra_cuu_tai_lieu` | Tự làm | Tự làm | Tự làm |
+| `goi_y_bai_tap` | Tự làm | Cấm (vì sợ #7, #8) | Cần TA duyệt |
+| `chuyen_TA` | Tự làm | Cần SV xác nhận | Tự làm |
+| `dang_FAQ` | Cần TA duyệt | Cấm (sợ sai cả lớp) | Cần TA duyệt |
 
 **Mức nào cũng có giá:**
 - **Tự làm toàn bộ:** #8 thì học viên chép được câu (b), không rút lại được; #7 thì AI xác nhận 15,25 và 11,5 là đúng.
@@ -284,11 +291,20 @@ Bối cảnh dùng cho mọi quyết định bên dưới: học viên hỏi sau
 
 **Cách chốt:** không chọn một mức cho cả tool. Nhóm tách theo **trạng thái bài** (lấy từ dữ liệu B) và **độ sâu của gợi ý**, như bảng ở mục 2. Câu hỏi quyết định là: *gợi ý này đọc xong rồi thì có thể chép thẳng vào bài không?* Không chép được thì tự làm. Có thể chép thì cấm. Ở giữa thì TA duyệt.
 
+Kết quả là cả ba phiếu đều được giữ một phần:
+- Phiếu "cấm" của Thế Anh giữ cho đáp số, xác nhận đúng/sai và viết hộ.
+- Phiếu "cần TA duyệt" của Minh giữ cho gợi ý sâu.
+- Phiếu "tự làm" của Phong giữ cho gợi ý bước đầu và bài đã hết hạn.
+
+**Hai chỗ lệch khác trong phiếu:**
+- **`chuyen_TA`:** Thế Anh chọn "cần học viên xác nhận", hai người còn lại chọn "tự làm". Nhóm chốt theo Thế Anh. Lý do: nội dung gửi đi là của học viên (#8, #9), và ca TA bắt đầu 08:00 nên thêm một cú bấm không làm chậm gì. Cái lo của phía "tự làm" là lỗi tài liệu #1 không tới giảng viên. Nhóm giải quyết lo đó bằng nháp ẩn danh của `soan_FAQ`, không cần bỏ bước xác nhận.
+- **`dang_FAQ`:** Thế Anh chọn "cấm" vì sợ sai lan cả lớp. Phong và Minh chọn "cần TA duyệt". Nhóm chốt **tách hai bước, giảng viên duyệt câu liên quan tài liệu sai**. Cách này chặn đúng cái Thế Anh lo, mà không mất tín hiệu "nhiều người vấp cùng một chỗ". Câu liên quan tài liệu sai cần giảng viên chứ không phải TA, vì chỉ giảng viên quyết được tài liệu đúng hay sai (§1, việc không làm số 3).
+
 ### Thử mức đã đặt trên 3 kịch bản
 
 | Kịch bản | Với mức của nhóm, AI làm gì · người dùng thấy gì | Cái sai ở §2 có bị chặn không? | Còn việc nào AI làm khi lẽ ra phải hỏi? | Người dùng bình thường có phải chờ vô ích không? |
 |---|---|---|---|---|
-| **#1** tài liệu §3.3 sai | `tra_cuu_tai_lieu` trả §3.3 (tự làm). `chuyen_TA` báo giảng viên câu §3.3 (tự làm, học viên thấy "đã chuyển, giảng viên xem từ 08:00"). `soan_FAQ` tạo nháp có cờ "tài liệu có thể sai"; `dang_FAQ` chờ giảng viên | **Lan cả lớp: chặn được**, vì đăng FAQ cần giảng viên duyệt. **Bảo học viên đúng là sai: chặn được một phần.** Mức tự chủ không sửa được nguồn sai; nó chỉ bảo đảm lỗi không lan và có người biết. Phần còn lại thuộc thiết kế câu chữ ở §3 | Không | Không. Học viên nhận trả lời ngay; chỉ FAQ phải chờ, mà FAQ không gấp |
+| **#1** tài liệu §3.3 sai | `tra_cuu_tai_lieu` trả §3.3 (tự làm). AI soạn sẵn câu hỏi gửi TA; học viên xem trước rồi bấm gửi (`chuyen_TA`, cần học viên xác nhận). Chỉ sau khi tool báo thành công, học viên mới thấy "Đã chuyển — Chờ TA, ca TA bắt đầu 08:00"; TA chuyển tiếp cho giảng viên. `soan_FAQ` tự tạo nháp ẩn danh có cờ "tài liệu có thể sai"; `dang_FAQ` chờ giảng viên | **Lan cả lớp: chặn được**, vì đăng FAQ cần giảng viên duyệt. **Bảo học viên đúng là sai: chặn được một phần.** Mức tự chủ không sửa được nguồn sai; nó chỉ bảo đảm lỗi không lan và có người biết. Phần còn lại thuộc thiết kế câu chữ ở §3 | Không | Không. Học viên nhận trả lời ngay; chỉ FAQ phải chờ, mà FAQ không gấp |
 | **#8** xin viết hộ câu (b) | Viết hộ là **cấm**: AI không có nút làm, nói rõ không viết hộ được. AI tự đưa gợi ý bước đầu (câu hỏi ngược về giá trị 45 và §3.4). Học viên muốn gợi ý sâu hơn thì gợi ý vào hàng chờ TA, kèm giờ trả lời | **Chặn được.** Đáp án và câu trích "thu nhập" ở §3.2 đều không được gửi | **Rủi ro còn lại:** gợi ý bước đầu do AI tự soạn, nên vẫn có thể vô tình lộ đáp án. Luật nội dung ở mục 2 giảm rủi ro này, nhưng không về 0 | Có chờ, nhưng **có chủ đích**: gợi ý sâu chờ tới 08:00, vẫn còn khoảng 16 giờ trước hạn |
 | **#3** "slide 12" (bình thường) | `tra_cuu_tai_lieu` (tự làm) không tìm thấy slide nào. AI trả ngay: "tài liệu buổi 3 không có slide đánh số; trung vị ở §3.2", kèm đoạn trích | Chặn được lỗi bịa nguồn | Không | **Không.** Không có bước người duyệt nào |
 
