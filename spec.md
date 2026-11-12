@@ -10,7 +10,7 @@
 |---|---|---|
 | Vũ Nguyễn Hoàng Minh | 2A202603541 | §5 Prototype (`prototype/index.html`: màn hình học viên + màn hình TA, chế độ Mock và AI thật OpenAI, ảnh đánh số) |
 | Nguyễn Tuấn Phong | 2A202603712 | §1 Lát cắt & phạm vi · §2 Kịch bản rủi ro (11 kịch bản, chọn 2 kịch bản đắt nhất) · §4 Mức tự chủ (4 tool, tách `dang_FAQ`, phiếu xếp mức, thử mức trên 3 kịch bản) |
-| Bùi Thế Anh | 2A202603546 | §3 Khi AI sai thì người dùng thấy gì |
+| Bùi Thế Anh | 2A202603546 | §3 Khi AI sai thì người dùng thấy gì, §5 Prototype |
 
 ## §1. Lát cắt & phạm vi
 ### Lát cắt (chép từ track T2)
@@ -330,9 +330,86 @@ Kết quả là cả ba phiếu đều được giữ một phần:
   Chậm hơn, nhưng đó là lý do để cả lớp tin FAQ.
 
 ## §5. Prototype  (chặng 5)
-- Link hoặc file · công cụ · phần nào mock · có lời gọi AI thật không.
-- 1–2 ảnh có đánh số; mỗi số: thể hiện gì · nguyên tắc HAX/PAIR nào · mức tự chủ nào.
-- Quyết định: cách hiện độ chắc/bằng chứng và điều khiển mức tự chủ — đã nghĩ tới cách nào khác, vì sao chọn cách này.
+
+
+### 5.1. File, công cụ và phạm vi mô phỏng
+
+- **File chạy:** [prototype/index.html](prototype/index.html). Tải về rồi mở bằng Chrome/Edge; xem hướng dẫn tại [prototype/README.md](prototype/README.md). Đây là file chạy cục bộ, chưa có link hosting.
+- **Công cụ:** một file HTML chứa CSS và JavaScript thuần. Hai màn hình chuyển bằng nút **“Học viên”** và **“TA / Giảng viên”**; không đăng nhập, không backend. Các khung chat, bằng chứng, hàng chờ và FAQ nằm trong hai màn hình đó.
+- **Dữ liệu dựng:** tài liệu A §3.1–§3.5, trang khoá học B, Bài tập 3 đang mở và giờ mô phỏng 23:00 ngày 12/11/2026. HV-07, HV-12, TA Lan, lớp 38 học viên và số người hỏi tương tự là dữ liệu mẫu, không phải dữ liệu thu thập thực tế.
+- **Chế độ Mock:** câu trả lời và các nhánh sửa lỗi được viết sẵn; câu nhập tự do được ghép kịch bản theo từ khoá. Tra cứu là đối chiếu với dữ liệu có trong file. Chuyển TA, duyệt gợi ý, đăng/gỡ FAQ chỉ cập nhật trạng thái trong tab; không gửi cho TA hay lớp thật. Thời điểm 08:05/08:10 trên phản hồi TA là giờ mô phỏng, không phải hệ thống đã đợi đến sáng.
+- **Chế độ AI thật:** đã có mã gọi OpenAI Chat Completions, model mặc định trong giao diện là `gpt-4o-mini`; nhận câu trả lời rồi kiểm tra trích dẫn và một số mẫu lộ đáp án trước khi hiện. API key do người demo nhập lúc chạy, giữ trong bộ nhớ tab, không ghi sẵn trong mã nguồn hay trường log. Các thao tác TA/FAQ vẫn là mô phỏng ngay cả khi bật AI thật.
+- **Bằng chứng AI thật:** hiện chưa có `ai-log.json` hoặc ảnh lời gọi thành công trong bài nộp; hai ảnh dưới đều ở chế độ **Mock**, panel log ghi **0 lời gọi**. Vì vậy chưa nhận bonus “đã có lời gọi AI thật”. Khi có lời gọi thành công với dữ liệu dựng, dùng nút “Tải ai-log.json” để lưu bằng chứng; việc có nút kết nối chưa chứng minh đã gọi thành công.
+
+### 5.2. Luồng demo khoảng 4 phút
+
+Mở lại trang bằng **F5** để bắt đầu từ dữ liệu mẫu. Nút “Làm mới hội thoại” chỉ xoá hội thoại, không xoá hàng chờ, FAQ hay cờ nguồn; không dùng nút này để giả lập một phiên hoàn toàn mới. Giữ chế độ **Mock**, bật **“Hiện mã chú thích”**.
+
+| Thời lượng | Bấm vào đâu | Thấy gì, chứng minh quyết định nào |
+|---|---|---|
+| 0:00–0:30 | Màn hình **Học viên**, ca **#8** đã mở sẵn | Hạn Bài tập 3, nhãn “Chỉ gợi ý bước đầu”, câu hỏi ngược và căn cứ §3.4. AI hỗ trợ ngay nhưng không viết hộ câu (b). |
+| 0:30–1:20 | **Hỏi TA** → sửa nháp → **Huỷ**; sau đó **Xin gợi ý sâu hơn** → **TA / Giảng viên** | Nháp câu hỏi chưa gửi khi chưa xác nhận. Gợi ý sâu vào hàng chờ; TA thấy câu hỏi, câu AI đã trả lời, gợi ý nháp và hạn bài. Học viên chưa nhận phần gợi ý sâu. |
+| 1:20–1:50 | TA sửa gợi ý → **Duyệt và gửi gợi ý** → trở lại **Học viên** | Gợi ý chỉ xuất hiện sau thao tác duyệt, có nhãn TA. Có thể thử nhập `15,25` vào nháp để thấy cảnh báo và nút duyệt bị vô hiệu hoá, rồi sửa lại. |
+| 1:50–2:40 | Bấm **#1 · Tài liệu §3.3 có câu sai** → mở thẻ trích dẫn | A1 tách phép tính đã kiểm khỏi câu cần xác minh; A2 cho đối chiếu nguồn. Bản hiện tại còn tự chuyển báo lỗi và có nút **Rút lại** ở C2 — đây là điểm lệch §4, ghi rõ tại §5.6. |
+| 2:40–3:20 | **TA / Giảng viên** → xem nháp FAQ có cờ lỗi nguồn → đổi sang **Vai: Giảng viên** | TA không đăng được nháp có cờ. Giảng viên sửa nội dung, tích ô đã kiểm rồi mới bấm **Duyệt và đăng**; FAQ đã đăng có nút **Gỡ**. Đây chỉ là thao tác đóng vai trong prototype. |
+| 3:20–4:00 | Trở lại **Học viên** → ca **#1 · AI đã lỡ nói “bạn tính sai” (đường sửa)** → **Báo câu trả lời sai** | Tin cũ được gắn “Câu trả lời đã được sửa”, có liên kết tới lời nhận lỗi và sửa ngay bên dưới. Nhánh tương ứng của #8 dùng ca **“AI đã lỡ lộ đáp án”** và nút **“Gợi ý đang lộ đáp án”**. |
+
+Hai ca mang tên **“AI đã lỡ…”** cố ý hiển thị câu sai để demo đường sửa; đó là dữ liệu mô phỏng, không phải kết quả một lần model thật thất bại. Không dùng chúng làm bằng chứng rằng bộ soát đã chặn được lỗi.
+
+### 5.3. Hai ảnh đánh số và ý nghĩa từng vị trí
+
+**Ảnh 1 — Màn hình học viên:** ca #8 đã xin gợi ý sâu, ca #1 đã hiện mâu thuẫn nguồn. Ảnh chụp trực tiếp từ prototype ở chế độ Mock, mở các thẻ bằng chứng và bật chú thích có sẵn trong giao diện.
+
+![Ảnh 1: Học viên — hai ca khó, bằng chứng và điều khiển A1–A3, B1–B3, C1–C4](prototype/stage5-01-hoc-vien.png)
+
+**Ảnh 2 — Màn hình TA:** cùng phiên của ảnh 1, có gợi ý sâu đang chờ duyệt và nháp FAQ có cờ “Tài liệu có thể sai”. Vai hiện tại là TA nên nháp có cờ chưa đăng được.
+
+![Ảnh 2: TA — hàng chờ gợi ý và nháp FAQ cần giảng viên duyệt tại C4](prototype/stage5-02-ta.png)
+
+| Mã trên ảnh | Thể hiện gì | Nguyên tắc HAX/PAIR | Mức tự chủ liên quan |
+|---|---|---|---|
+| **A1 · ảnh 1** | Tách “Phép tính đã kiểm” khỏi “Câu trong tài liệu cần xem lại”; không biến tìm đúng nguồn thành kết luận nguồn đúng. | **G10** — thu hẹp phần khẳng định khi có mâu thuẫn. | AI tự trả lời phần kiểm được; việc xác minh/đính chính nguồn chuyển người. |
+| **A2 · ảnh 1** | Mã §3.3, đoạn gốc, phần tô sáng và phép kiểm `0,5 × 0,5 = 0,25`; câu đang có vấn đề mang cảnh báo. | **PAIR — Errors + Graceful Failure** — thấy được chỗ lỗi và căn cứ để sửa. | `tra_cuu_tai_lieu`: **tự làm**, chỉ đọc. |
+| **A3 · ảnh 1** | “Xem trước câu hỏi gửi TA”, “Báo câu trả lời sai”, “Học tiếp phần khác”; nhánh sửa giữ liên kết với câu cũ. | **G9** — sửa dễ; **PAIR** — có đường tiếp tục. | Câu hỏi riêng **cần học viên xác nhận**; mở nháp chưa phải gửi. |
+| **B1 · ảnh 1** | Trạng thái bài và hạn nộp từ B, nhãn chỉ hỗ trợ bước đầu. | **G10** — giới hạn phạm vi hỗ trợ theo tình huống. | Bước đầu **tự làm**; đáp số/viết hộ **cấm**. |
+| **B2 · ảnh 1** | Gợi ý có căn cứ §3.4; §3.5 cho đối chiếu đề bài, không chọn hộ kết luận câu (b). | **G10** — giữ gợi ý trong phần được phép hỗ trợ. | Tra cứu và gợi ý bước đầu **tự làm**. |
+| **B3 · ảnh 1** | Ô cách nghĩ, “Dừng gợi ý”, “Hỏi TA”, “Gợi ý đang lộ đáp án”. | **G9** và **PAIR — Errors + Graceful Failure**. | Học viên điều khiển bước tiếp; dừng không thể hoàn tác phần đã đọc. |
+| **C1 · ảnh 1** | Dấu “khớp tài liệu” cạnh đoạn trích, cho mở nguồn để kiểm. Dấu này kiểm đoạn có trong fixture, không chứng nhận kiến thức đúng. | **G10** — bám nguồn đã có; gắn với căn cứ tại A2. | `tra_cuu_tai_lieu`: **tự làm**, không cần hoàn tác vì chỉ đọc. |
+| **C2 · ảnh 1** | Báo lỗi tài liệu đã vào hàng chờ, giờ ca TA tiếp theo và nút “Rút lại”. | **G9** — sửa/thu hồi thao tác khi còn tác dụng. | **Hiện tại tự làm + rút lại; chưa khớp §4 yêu cầu xác nhận.** Đây là bằng chứng của sai khác, không tính là đã đáp ứng quy tắc đó. |
+| **C3 · ảnh 1; hàng chờ ảnh 2** | Không có nút giải hộ; gợi ý sâu có trạng thái chờ và màn hình TA sửa/duyệt. | **G10** và **PAIR** — giới hạn việc AI làm, giữ đường hỗ trợ. | Thấy cả ba mức: bước đầu **tự làm**; sâu hơn **TA duyệt**; đáp số/viết hộ **cấm**. |
+| **C4 · ảnh 1 và 2** | AI chỉ soạn nháp FAQ; nháp có cờ lỗi nguồn yêu cầu vai giảng viên và ô xác nhận đã kiểm. | **PAIR — Errors + Graceful Failure** — hạn chế lỗi lan sang cả lớp. | `soan_FAQ`: **tự làm**; `dang_FAQ`: **cần duyệt**, riêng lỗi nguồn do giảng viên duyệt. |
+
+### 5.4. Quyết định hiển thị và các phương án đã loại
+
+| Quyết định | Phương án đã cân nhắc và loại | Vì sao chọn cách hiện tại |
+|---|---|---|
+| **Hiện điều đã biết/cần xác minh bằng nhãn và bằng chứng** | Điểm tin cậy như “95%”; chỉ ghi chung “AI có thể sai”. | Không có dữ liệu hiệu chuẩn để đưa phần trăm. Ca #1 cho thấy trích đúng vẫn có thể sai; A1/A2 chỉ đúng câu cần xem lại và phép tính kiểm được, giúp học viên quyết định học tiếp hay hỏi người. |
+| **Đặt nguồn sát câu trả lời, bấm mở được** | Gom nguồn ở cuối trang; chỉ hiện mã § nhưng không có nội dung. | Học viên đang hỏi một chỗ cụ thể, cần đối chiếu ngay. Tuy nhiên việc mở cả mục nguồn đang có lỗ hổng với bài đang mở, được ghi ở §5.6; dấu “khớp tài liệu” không thay cho việc soát nội dung. |
+| **Hai màn hình học viên và TA, cùng một phiên dữ liệu** | Chỉ có chat và một nút “Chuyển người”; dựng hệ thống tài khoản/nhắn tin thật. | Màn hình TA cho thấy người duyệt nhận gì, sửa gì, quyết định gửi/đăng lúc nào. Dữ liệu trong cùng tab đủ demo chuỗi hành động theo yêu cầu 1–2 màn hình, không cần backend. |
+| **Gợi ý sâu nằm trong hàng chờ, câu hỏi riêng có bản xem trước** | Gửi mọi thứ ngay rồi cho hoàn tác; chờ TA cho cả gợi ý bước đầu. | Gợi ý đã đọc không thu hồi được; cần chặn trước khi gửi. Chờ duyệt cả bước đầu lại khiến học viên kẹt lúc 23:00. Bản xem trước giúp học viên kiểm nội dung riêng trước khi chuyển. Luồng báo lỗi tự gửi ở C2 cần được đưa về cùng quy tắc xác nhận của §4. |
+| **Tách nháp FAQ và đăng FAQ, phân quyền TA/giảng viên trong demo** | AI tự đăng; cấm hoàn toàn FAQ. | #1 sai thì lan ra cả lớp, nên người duyệt phải thấy nháp và cờ nguồn trước khi đăng. Soạn nháp vẫn giữ được tín hiệu tài liệu có vấn đề; cả lớp chưa thấy nháp. Gỡ FAQ giảm lan truyền tiếp nhưng không xoá điều người khác đã đọc. |
+| **Giữ Mock để demo ổn định, tách chế độ AI thật và log** | Chỉ dùng AI thật cho mọi lần bấm; gắn nhãn AI thật cho câu viết sẵn. | Mock giúp trình bày nhất quán cả lỗi và đường sửa. Chế độ AI thật có nhãn riêng và log để kiểm bằng chứng; chưa gọi thành công thì chưa kết luận đạt bonus. |
+
+### 5.5. Khi gặp ca lạ
+
+- **Mock có từ khoá nhận diện:** chuyển vào kịch bản tương ứng. Ví dụ câu có “slide” đi nhánh nguồn không tồn tại; câu có “viết hộ/chép” đi nhánh bài đang mở. Đây là phân nhánh bằng từ khoá, không phải hiểu mọi cách diễn đạt hay mọi yêu cầu gộp.
+- **Mock không khớp:** hiện “Mình chưa tìm thấy nội dung này…” và cho nói rõ mục đang hỏi hoặc mở nháp gửi TA. Đã thử câu “Em muốn tìm tài liệu về thiết kế đồ hoạ” và thấy nhánh này; không sinh kiến thức ngoài fixture.
+- **AI thật:** có thể dùng câu tự do khi đã nhập key; phản hồi được đối chiếu mã mục và soát một số mẫu đáp án. Nếu gọi API lỗi, giao diện hiện lỗi để người demo xử lý; không lấy câu Mock rồi ghi là phản hồi API. Các ca lỗi được dựng sẵn vẫn chạy Mock để minh hoạ đường sửa.
+- **Giới hạn:** không khẳng định đã xử lý đúng mọi ca lạ. Ghép từ khoá có thể chọn sai nhánh; bộ soát theo mẫu có thể bỏ sót cách diễn đạt khác hoặc chuỗi gợi ý qua nhiều lượt. Phần này chưa thay thế một bộ đánh giá model.
+
+### 5.6. Kết quả kiểm tra và phần còn thiếu
+
+Đã bấm thử trên Chrome ở chế độ Mock, chỉ dùng dữ liệu dựng; hai ảnh trên chụp từ chính phiên chạy. Các luồng đã kiểm: mở nháp không gửi → xác nhận mới vào hàng chờ → rút lại; gợi ý sâu chờ TA → cảnh báo khi nhập đáp số → duyệt gợi ý hợp lệ mới hiện cho học viên; TA không đăng được FAQ có cờ → giảng viên xác nhận mới đăng → gỡ được; hai nhánh sửa lỗi #1/#8; câu không khớp đi nhánh hỏi thêm/chuyển TA. Không gặp ngoại lệ JavaScript trong các luồng này.
+
+| Đối chiếu guide §5 / rubric R5 | Bằng chứng và kết luận |
+|---|---|
+| **1–2 màn hình, ca khó bấm qua được** | Có hai màn hình và các luồng trên. Có dữ liệu giả, không đăng nhập, không backend; thao tác duyệt là người demo đóng vai, không có bảo mật phân quyền thật. |
+| **Thấy bằng chứng và giới hạn của AI** | A1/A2, B1/B2 và C1 trong ảnh 1; dấu khớp chỉ nói về trích dẫn. |
+| **Ít nhất hai mức tự chủ; HAX/PAIR trỏ đúng vị trí** | C3/C4 thể hiện tự làm, cần duyệt, cấm; bảng §5.3 nối ba nguyên tắc đã chọn ở §3 với vị trí cụ thể. |
+| **Mức tự chủ khớp §4** | **Chưa đầy đủ:** `addAI()` gọi `startDocReport()` ngay khi có lỗi nguồn, đưa cả mã học viên và câu hỏi vào hàng chờ mà chưa xác nhận. C2/ảnh 2 thể hiện đúng hành vi đó. Theo §3.4 và §4, câu hỏi phải qua bản xem trước; đường tự báo lỗi nguồn nên là nháp FAQ ẩn danh. Có nút rút lại không thay cho bước xác nhận trước khi gửi. |
+| **Không làm lộ lời giải qua bằng chứng** | **Còn lỗi:** ca #7 trích một câu an toàn ở §3.2, nhưng `citeHTML()` mở toàn bộ mục nguồn, gồm câu về “thu nhập”. Cần giới hạn nội dung hiển thị theo bài đang mở, không chỉ kiểm đoạn trích ban đầu. Chưa coi luồng #7 là đã chặn hết rủi ro. |
+| **Trạng thái thất bại/không chắc khi chuyển TA** | Mới mô phỏng chuyển thành công bằng bộ hẹn giờ; chưa có nhánh gửi thất bại hoặc mất xác nhận như thiết kế §3.4. Chưa có backend để kiểm độ tin cậy chuyển thật. |
+| **Bonus AI thật** | Có mã tích hợp và nút xuất log; **chưa có bằng chứng lời gọi thành công**, chưa tính bonus. |
 
 ## §6. Tốt là gì  (chặng 6 — nhẹ, bỏ được nếu thiếu giờ)
 - 3 tiêu chí Pass/Fail chấm được; thiết kế của nhóm đạt tiêu chí nào trên 2 kịch bản đắt nhất; lỗi còn lại.
