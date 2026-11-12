@@ -10,7 +10,7 @@
 |---|---|---|
 | Vũ Nguyễn Hoàng Minh | 2A202603541 | §5 Prototype (`prototype/index.html`: màn hình học viên + màn hình TA, chế độ Mock và AI thật OpenAI, ảnh đánh số) |
 | Nguyễn Tuấn Phong | 2A202603712 | §1 Lát cắt & phạm vi · §2 Kịch bản rủi ro (11 kịch bản, chọn 2 kịch bản đắt nhất) |
-|  |  |  |
+| Bùi Thế Anh | 2A202603546 | §3 KHI AI SAI THÌ NGƯỜI DÙNG THẤY GÌ |
 
 ## §1. Lát cắt & phạm vi
 ### Lát cắt (chép từ track T2)
