@@ -3,7 +3,7 @@
 |---|---|---|
 | Vũ Nguyễn Hoàng Minh | 2A202603541 | §5 Prototype (`prototype/index.html`: màn hình học viên + màn hình TA / Giảng viên, chế độ Mock và AI thật OpenAI, bộ soát lộ đáp án và bổ sung bước đầu, 3 ảnh đánh số, `ai-log.json`) · §6 Tốt là gì (3 tiêu chí Pass/Fail, chấm thử trên #1 và #8, lỗi còn lại) |
 | Nguyễn Tuấn Phong | 2A202603712 | §1 Lát cắt & phạm vi · §2 Kịch bản rủi ro (11 kịch bản, chọn 2 kịch bản đắt nhất) · §4 Mức tự chủ (4 tool, tách `dang_FAQ`, phiếu xếp mức, thử mức trên 3 kịch bản) |
-| Bùi Thế Anh | 2A202603546 | §3 Khi AI sai thì người dùng thấy gì · §5 rà soát và kiểm thử prototype (phát hiện thẻ nguồn ca #7 lộ câu "thu nhập" ở §3.2, thiếu nhánh gửi TA thất bại; ảnh `stage5-*.png`) |
+| Bùi Thế Anh | 2A202603546 | §3 Khi AI sai thì người dùng thấy gì · §5 rà soát và kiểm thử prototype |
 
 ## §1. Lát cắt & phạm vi
 ### Lát cắt (chép từ track T2)
