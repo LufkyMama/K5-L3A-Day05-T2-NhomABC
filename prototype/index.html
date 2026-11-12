@@ -604,6 +604,10 @@ function citeHTML(m, c, n, nC1) {
   if (st === "bad" || st === "hidden") return `<div class="cite"${n}><summary><span class="code">${esc(c.muc)}</span><span>${st === "bad" ? "Không có mục này" : name}</span><span class="vf ${st}">${lab}</span></summary></div>`;
   const text = esc(src.text);
   let body = c.doan ? text.replace(esc(c.doan), `<mark>${esc(c.doan)}</mark>`) : text;
+  /* Bài đang mở: chỉ hiện đúng đoạn được trích, không mở cả mục, vì cả mục §3.2 chứa câu "thu nhập" là kết luận câu (b) */
+  if (m.data.bai_dang_mo && !m.bad) body = c.doan
+    ? `<mark>${esc(c.doan)}</mark> <span class="small">· Bài đang mở nên chỉ hiện đoạn được trích.</span>`
+    : `<span class="small">Bài đang mở nên không hiện nguyên mục.</span>`;
   const calc = flagged && m.data.phep_kiem ? `<span class="checkcalc">Phép kiểm của học viên: ${esc(m.data.phep_kiem)}</span>` : "";
   return `<details class="cite"${n}${flagged ? " open" : ""}><summary><span class="code">${esc(c.muc)}</span><span>${name}</span><span class="vf ${st}"${st === "ok" ? nC1 : ""}>${lab}</span></summary><blockquote><span>${body}</span>${calc}</blockquote></details>`;
 }

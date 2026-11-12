@@ -3,7 +3,7 @@
 |---|---|---|
 | Vũ Nguyễn Hoàng Minh | 2A202603541 | §5 Prototype (`prototype/index.html`: màn hình học viên + màn hình TA / Giảng viên, chế độ Mock và AI thật OpenAI, bộ soát lộ đáp án và bổ sung bước đầu, 3 ảnh đánh số, `ai-log.json`) · §6 Tốt là gì (3 tiêu chí Pass/Fail, chấm thử trên #1 và #8, lỗi còn lại) |
 | Nguyễn Tuấn Phong | 2A202603712 | §1 Lát cắt & phạm vi · §2 Kịch bản rủi ro (11 kịch bản, chọn 2 kịch bản đắt nhất) · §4 Mức tự chủ (4 tool, tách `dang_FAQ`, phiếu xếp mức, thử mức trên 3 kịch bản) |
-| Bùi Thế Anh | 2A202603546 | §3 Khi AI sai thì người dùng thấy gì |
+| Bùi Thế Anh | 2A202603546 | §3 Khi AI sai thì người dùng thấy gì · §5 rà soát và kiểm thử prototype (phát hiện thẻ nguồn ca #7 lộ câu "thu nhập" ở §3.2, thiếu nhánh gửi TA thất bại; ảnh `stage5-*.png`) |
 
 ## §1. Lát cắt & phạm vi
 ### Lát cắt (chép từ track T2)
@@ -394,6 +394,7 @@ Bật "Hiện mã chú thích" trên thanh trên cùng thì các mã dưới đ�
 - **Kiểm trích dẫn trước khi hiện.** Mã mục không có trong dữ liệu A/B (ví dụ "slide 12") thì thẻ bị ẩn và gắn "✕ không có trong tài liệu". Đoạn trích không nguyên văn thì thẻ hiện đoạn gốc và gắn "≈ không nguyên văn". Áp dụng cho cả câu trả lời của AI thật.
 - **Trạng thái "cần xác minh" gắn với câu nguồn, không gắn với một lần trả lời.** Sau ca #1, mọi thẻ trích câu "luôn nhỏ hơn" ở §3.3 đều mang nhãn "⚠ cần xác minh". Câu đó cũng được liệt kê ở cột "Nguồn cần xác minh".
 - **Bộ soát cho bài đang mở.** Chạy trước khi hiện, áp cho cả AI thật. Chặn: con số đáp án Bài tập 3, câu "thu nhập" ở §3.2, câu nêu kết luận câu (b), câu xác nhận đúng/sai. Nếu phát hiện, trang thay bằng câu an toàn và ghi rõ "Bộ soát đã chặn câu trả lời gốc". Cùng bộ soát đó khoá nút duyệt gợi ý của TA.
+- **Thẻ nguồn của bài đang mở chỉ hiện đúng đoạn được trích.** Khi rà soát, nhóm thấy ở ca #7: AI trích một câu an toàn của §3.2, nhưng bấm mở thẻ thì hiện **cả mục §3.2**, gồm câu "thường dùng cho dữ liệu lệch như thu nhập", tức đáp án câu (b). Kiểm đoạn trích thôi chưa đủ, phải kiểm cả phần mở rộng của thẻ. Nhóm đã sửa: với bài đang mở, thẻ chỉ hiện đoạn được trích, kèm dòng "Bài đang mở nên chỉ hiện đoạn được trích". Ca không thuộc bài đang mở (như #1) vẫn hiện nguyên mục để học viên đối chiếu.
 - **Không nói "đã làm" trước khi làm.** Trang xoá các cụm "đã báo / đã chuyển TA" trong câu trả lời của AI thật. Chỉ khung trạng thái do tool trả về mới được nói "Đã chuyển".
 - **Không để AI từ chối suông ở bài đang mở.** Nếu câu trả lời về Bài tập 3 không có quyết định "gợi ý bước đầu", hoặc không trích được mục § nào có thật, trang giữ câu từ chối của AI và **bổ sung câu hỏi bước đầu chuẩn của §3.3** (trích §3.4, §3.5). Trang hiện ghi chú "Trang đã bổ sung câu bước đầu…" cho học viên thấy, và ghi `trang_bo_sung_buoc_dau: true` vào log. Câu bổ sung cũng đi qua bộ soát lộ đáp án. Nút "Hỏi TA" luôn có ở mọi câu về bài đang mở, kể cả khi model không soạn nháp.
 
@@ -429,7 +430,9 @@ Bật "Hiện mã chú thích" trên thanh trên cùng thì các mã dưới đ�
 
 ### 5.7. Giới hạn của prototype
 
-- Các tool chỉ được mô phỏng trong trang; không có hệ thống TA thật, giờ TA trả lời là giờ giả lập.
+- Các tool chỉ được mô phỏng trong trang; không có hệ thống TA thật, giờ TA trả lời là giờ giả lập. Thao tác duyệt TA / Giảng viên là người demo đóng vai, không có phân quyền thật.
+- Việc chuyển TA luôn thành công sau một khoảng chờ giả lập. Prototype **chưa có** nhánh "Chưa gửi được" và "Chưa xác nhận đã chuyển" như bảng ở §3.4.
+- Nút "Làm mới hội thoại" chỉ xoá khung chat, không xoá hàng chờ TA, nháp FAQ hay cờ "cần xác minh". Muốn bắt đầu lại từ đầu thì bấm F5.
 - Bộ soát chỉ bắt những mẫu đã biết. Cách diễn đạt khác (ví dụ "số 45 kéo trung bình lên") có thể lọt qua (xem §6.3).
 - Ở chế độ AI thật, việc làm đúng luật còn tuỳ model. Các lần chạy thật với `gpt-4o-mini` ngày 12/11/2026:
 
