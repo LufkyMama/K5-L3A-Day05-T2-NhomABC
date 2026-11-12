@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trợ lý Học Bài Buổi 3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: thanh khoá học ở trên · cột chat (học viên) hoặc hàng chờ (TA) bên trái · cột ngữ cảnh + chú thích bên phải; xếp 1 cột ở màn hình hẹp. */
+:root {
+  --paper: #f4f6fa;
+  --surface: #ffffff;
+  --sunken: #eef1f7;
+  --ink: #18203a;
+  --muted: #5a6479;
+  --line: #dbe0ea;
+  --accent: #2d58cf;
+  --accent-soft: #e4ebfc;
+  --mark: #fff0a3;
+  --mark-ink: #4d3f00;
+  --ok: #1d7549;
+  --ok-soft: #e1f3e9;
+  --warn: #a35f00;
+  --warn-soft: #fdf0dc;
+  --stop: #b0281f;
+  --stop-soft: #fbe5e3;
+  --ta: #6a3d9e;
+  --ta-soft: #efe6fa;
+  --badge: #d1347a;
+  --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f131c; --surface: #171c28; --sunken: #121722; --ink: #e5e9f2; --muted: #9ba4b8;
+    --line: #2a3244; --accent: #85a2ff; --accent-soft: #1f2a4a; --mark: #4b4214; --mark-ink: #fff0a3;
+    --ok: #63c895; --ok-soft: #15301f; --warn: #f1b65a; --warn-soft: #36280f; --stop: #ff8f86; --stop-soft: #3a1714;
+    --ta: #c6a6f2; --ta-soft: #2b1f3e; --badge: #ff6fae; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f131c; --surface: #171c28; --sunken: #121722; --ink: #e5e9f2; --muted: #9ba4b8;
+  --line: #2a3244; --accent: #85a2ff; --accent-soft: #1f2a4a; --mark: #4b4214; --mark-ink: #fff0a3;
+  --ok: #63c895; --ok-soft: #15301f; --warn: #f1b65a; --warn-soft: #36280f; --stop: #ff8f86; --stop-soft: #3a1714;
+  --ta: #c6a6f2; --ta-soft: #2b1f3e; --badge: #ff6fae; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 40px;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.mono { font-family: var(--font-mono); font-size: .86em; }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 16px; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 16px;
+}
+.course { display: grid; gap: 2px; min-width: 0; }
+.course .eyebrow { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.course h1 { margin: 0; font-size: 18px; line-height: 1.3; text-wrap: balance; }
+.clock { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--sunken); }
+.seg button { border: 0; background: transparent; padding: 6px 12px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); }
+.chk { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); padding: 6px 4px; }
+
+/* ---------- layout ---------- */
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; align-items: start; }
+@media (max-width: 920px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); min-width: 0; }
+.panel-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.panel-h h2 { margin: 0; font-size: 15px; }
+.panel-b { padding: 14px 16px; display: grid; gap: 12px; min-width: 0; }
+.side { display: grid; gap: 16px; min-width: 0; }
+
+/* ---------- AI identity bar ---------- */
+.idbar { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 13px; color: var(--muted); padding: 10px 16px; background: var(--sunken); border-bottom: 1px solid var(--line); }
+.idbar strong { color: var(--ink); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); display: inline-block; margin-right: 6px; }
+
+/* ---------- chat ---------- */
+.log { display: grid; gap: 14px; padding: 18px 16px; min-width: 0; }
+.msg { display: grid; gap: 6px; max-width: 760px; min-width: 0; }
+.msg.user { justify-self: end; }
+.who { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+.msg.user .who { text-align: right; }
+.bubble { padding: 10px 14px; border-radius: 12px; overflow-wrap: anywhere; }
+.msg.user .bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+:root[data-theme="dark"] .msg.user .bubble { color: #0f131c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .msg.user .bubble { color: #0f131c; } }
+.msg.ta .bubble { background: var(--ta-soft); border: 1px solid var(--ta); }
+.card { border: 1px solid var(--line); border-radius: 12px; border-top-left-radius: 4px; background: var(--surface); padding: 12px 14px; display: grid; gap: 10px; min-width: 0; }
+.card p { margin: 0; }
+.headrow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid transparent; white-space: nowrap; }
+.p-teach { background: var(--accent-soft); color: var(--accent); }
+.p-ask { background: var(--warn-soft); color: var(--warn); }
+.p-hint { background: var(--ok-soft); color: var(--ok); }
+.p-none { background: var(--stop-soft); color: var(--stop); }
+.p-later { background: var(--sunken); color: var(--muted); border-color: var(--line); }
+.p-conf { background: transparent; border-color: var(--line); color: var(--muted); font-weight: 500; }
+.p-src { background: transparent; border-color: var(--line); color: var(--muted); font-weight: 500; }
+.bar { display: inline-flex; gap: 2px; }
+.bar i { width: 10px; height: 6px; border-radius: 2px; background: var(--line); display: block; }
+.bar i.on { background: currentColor; }
+
+.forbid { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; border-radius: 8px; background: var(--stop-soft); color: var(--stop); font-size: 13px; font-weight: 500; }
+.forbid b { font-weight: 700; }
+
+.cites { display: grid; gap: 6px; }
+.cite { border: 1px solid var(--line); border-radius: 8px; background: var(--sunken); }
+.cite summary { list-style: none; display: flex; gap: 8px; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 13px; flex-wrap: wrap; }
+.cite summary::-webkit-details-marker { display: none; }
+.cite .code { font-family: var(--font-mono); font-weight: 600; background: var(--mark); color: var(--mark-ink); padding: 0 6px; border-radius: 4px; }
+.cite .vf { margin-left: auto; font-size: 12px; font-weight: 600; }
+.vf.ok { color: var(--ok); } .vf.partial { color: var(--warn); } .vf.bad { color: var(--stop); }
+.cite blockquote { margin: 0; padding: 4px 12px 10px 12px; font-size: 13px; color: var(--muted); }
+.cite blockquote mark { background: var(--mark); color: var(--mark-ink); padding: 0 2px; }
+
+.steps { display: grid; gap: 8px; border-left: 3px solid var(--ok); padding: 2px 0 2px 12px; }
+.step { font-size: 14px; }
+.step b { color: var(--ok); margin-right: 4px; }
+.steps-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+:root[data-theme="dark"] .btn.primary { color: #0f131c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0f131c; } }
+.btn.ta { border-color: var(--ta); color: var(--ta); }
+.btn.ghost { border-color: transparent; background: transparent; color: var(--muted); font-weight: 500; padding-inline: 4px; }
+.btn.ghost:hover { color: var(--ink); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.esc { border: 1px dashed var(--ta); border-radius: 10px; padding: 10px 12px; display: grid; gap: 8px; background: var(--ta-soft); }
+.esc .t { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ta); }
+.esc p { font-size: 14px; }
+.esc .note { font-size: 13px; color: var(--muted); }
+
+.fb { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); }
+.blocked { padding: 8px 12px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); font-size: 13px; }
+.typing { color: var(--muted); font-size: 13px; padding-left: 2px; }
+
+.composer { border-top: 1px solid var(--line); padding: 12px 16px; display: grid; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--sunken); border-radius: 999px; padding: 4px 12px; font-size: 13px; text-align: left; }
+.chip:hover { border-color: var(--accent); }
+.chip small { color: var(--muted); font-weight: 600; margin-right: 4px; }
+.row { display: flex; gap: 8px; }
+.row textarea { flex: 1; min-width: 0; resize: vertical; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--surface); }
+.hint-line { font-size: 12px; color: var(--muted); }
+
+/* ---------- side panels ---------- */
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 13px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.legend { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.legend li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; font-size: 13px; align-items: start; }
+.legend .n { width: 22px; height: 22px; border-radius: 50%; background: var(--badge); color: #fff; font-weight: 700; font-size: 12px; display: grid; place-items: center; }
+.legend .lv { display: block; color: var(--muted); font-size: 12px; }
+.field { display: grid; gap: 4px; font-size: 13px; }
+.field label { font-weight: 600; }
+.field input { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--surface); min-width: 0; }
+.small { font-size: 12px; color: var(--muted); margin: 0; }
+.status { font-size: 13px; font-weight: 600; }
+.status.ok { color: var(--ok); } .status.bad { color: var(--stop); }
+pre.logview { margin: 0; max-height: 220px; overflow: auto; background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: 11px/1.45 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* ---------- TA view ---------- */
+.queue { display: grid; gap: 12px; padding: 16px; }
+.ticket { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; background: var(--surface); min-width: 0; }
+.ticket .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 12px; color: var(--muted); align-items: center; font-variant-numeric: tabular-nums; }
+.ticket q { font-weight: 600; quotes: "“" "”"; }
+.ticket .ai { font-size: 13px; color: var(--muted); border-left: 3px solid var(--line); padding-left: 10px; }
+.ticket textarea { width: 100%; min-height: 60px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--surface); resize: vertical; }
+.confirm { border: 1px solid var(--ta); border-radius: 10px; background: var(--ta-soft); padding: 10px 12px; display: grid; gap: 8px; font-size: 13px; }
+.s-wait { background: var(--warn-soft); color: var(--warn); }
+.s-done { background: var(--ok-soft); color: var(--ok); }
+.s-off { background: var(--sunken); color: var(--muted); border-color: var(--line); }
+.faq { display: grid; gap: 10px; }
+.faq-item { border-bottom: 1px solid var(--line); padding-bottom: 10px; font-size: 13px; display: grid; gap: 4px; }
+.faq-item:last-child { border-bottom: 0; padding-bottom: 0; }
+
+/* ---------- numbered annotations (for screenshots) ---------- */
+[data-n] { position: relative; }
+.annotate [data-n]::after {
+  content: attr(data-n);
+  position: absolute; top: -9px; left: -9px; z-index: 5;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--badge); color: #fff; font: 700 11px/20px var(--font-body); text-align: center;
+  box-shadow: 0 0 0 2px var(--surface);
+  pointer-events: none;
+}
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 20; max-width: calc(100% - 32px); }
+@media (prefers-reduced-motion: no-preference) { .msg { animation: in .18s ease-out; } @keyframes in { from { transform: translateY(4px); opacity: .6; } to { transform: none; opacity: 1; } } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+
+  <header class="topbar">
+    <div class="course">
+      <span class="eyebrow">Trang khoá học · Nhập môn phân tích dữ liệu</span>
+      <h1>Buổi 3 · Thống kê mô tả</h1>
+      <span class="clock">Mô phỏng: Thứ Năm 12/11/2026 · 22:47 · Giờ TA 08:00–22:00 (đang ngoài giờ)</span>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Màn hình">
+        <button id="v-student" aria-pressed="true">Học viên</button>
+        <button id="v-ta" aria-pressed="false">TA <span id="ta-count" class="mono"></span></button>
+      </div>
+      <div class="seg" role="group" aria-label="Nguồn trả lời">
+        <button id="m-mock" aria-pressed="true">Mock</button>
+        <button id="m-real" aria-pressed="false">AI thật</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="annot"> Hiện số chú thích</label>
+    </div>
+  </header>
+
+  <!-- ================= STUDENT VIEW ================= -->
+  <div class="cols" id="student-view">
+    <section class="panel" aria-label="Trợ lý học bài">
+      <div class="idbar" data-n="1">
+        <span><span class="dot"></span><strong>Bạn đang chat với trợ lý AI</strong>, không phải giảng viên hay TA.</span>
+        <span>Chỉ dùng tài liệu <strong>buổi 3</strong> và trang khoá học. Có thể sai, hãy đối chiếu mục § được trích.</span>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="composer">
+        <div class="chips" id="chips"></div>
+        <form class="row" id="form">
+          <textarea id="q" rows="2" placeholder="Hỏi về bài buổi 3…" aria-label="Câu hỏi"></textarea>
+          <button class="btn primary" type="submit">Gửi</button>
+        </form>
+        <p class="hint-line" id="mode-line"></p>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="panel" id="real-panel" hidden>
+        <div class="panel-h"><h2>Kết nối OpenAI</h2><span class="status" id="key-status">Chưa có key</span></div>
+        <div class="panel-b">
+          <div class="field">
+            <label for="key">API key</label>
+            <input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-…">
+          </div>
+          <div class="field">
+            <label for="model">Model</label>
+            <input id="model" type="text" value="gpt-4o-mini" spellcheck="false">
+          </div>
+          <p class="small">Key chỉ nằm trong bộ nhớ của tab này: không lưu vào máy, không ghi vào log, chỉ gửi tới <span class="mono">api.openai.com</span>. Đóng tab là mất. Chỉ đưa dữ liệu dựng của bài lab vào.</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><h2>Trang khoá học</h2></div>
+        <div class="panel-b">
+          <dl class="kv">
+            <dt>Buổi đã mở</dt><dd>1, 2, 3</dd>
+            <dt>Bài tập 3</dt><dd><strong>Đang mở</strong> · hạn 13/11/2026 23:59</dd>
+            <dt>Bài tập 2</dt><dd>Đã hết hạn · có đáp án (07/11)</dd>
+            <dt>Buổi 7</dt><dd>Kiểm định giả thuyết và p-value</dd>
+            <dt>Giờ TA</dt><dd>08:00–22:00</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><h2>Chú thích cho ảnh chụp</h2></div>
+        <div class="panel-b">
+          <ol class="legend">
+            <li><span class="n">1</span><span>Thanh danh tính: là AI, dùng nguồn nào, có thể sai<span class="lv">G1 · G2</span></span></li>
+            <li><span class="n">2</span><span>Nhãn quyết định và độ chắc của câu trả lời<span class="lv">G2 · PAIR Explainability + Trust</span></span></li>
+            <li><span class="n">3</span><span>Thẻ trích dẫn §, bấm xem nguyên đoạn, có dấu kiểm khớp tài liệu<span class="lv">G11 · tra_cuu_tai_lieu: tự làm (chỉ đọc)</span></span></li>
+            <li><span class="n">4</span><span>Gợi ý từng bước, học viên tự mở bước tiếp, không có đáp số<span class="lv">goi_y_bai_tap: tự làm, giới hạn từng bước · G8</span></span></li>
+            <li><span class="n">5</span><span>Không đưa, không xác nhận đáp số bài đang mở, và không có nút nào làm việc đó<span class="lv">Việc cấm</span></span></li>
+            <li><span class="n">6</span><span>Thẻ soạn sẵn cho TA: Gửi / Không cần, gửi rồi vẫn rút lại được<span class="lv">chuyen_TA: học viên xác nhận, có hoàn tác · đường chuyển người</span></span></li>
+            <li><span class="n">7</span><span>Hỏi lại kèm lựa chọn khi câu hỏi mơ hồ<span class="lv">G10</span></span></li>
+            <li><span class="n">8</span><span>Báo câu này sai, chọn sai ở chỗ nào<span class="lv">G15 · G9</span></span></li>
+            <li><span class="n">9</span><span>(Màn hình TA) Duyệt trước khi đăng FAQ cho cả lớp<span class="lv">dang_FAQ: cần TA duyệt</span></span></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><h2>Log lời gọi AI</h2><span class="small mono" id="log-count">0 lời gọi</span></div>
+        <div class="panel-b">
+          <pre class="logview" id="logview">Chưa có lời gọi nào.</pre>
+          <div class="opts">
+            <button class="btn" id="copy-log" type="button">Sao chép log</button>
+            <button class="btn" id="dl-log" type="button">Tải ai-log.json</button>
+          </div>
+          <p class="small">Lưu file này vào <span class="mono">prototype/</span> làm bằng chứng cho bonus. Log không chứa API key.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- ================= TA VIEW ================= -->
+  <div class="cols" id="ta-view" hidden>
+    <section class="panel" aria-label="Hàng chờ TA">
+      <div class="panel-h"><h2>Hàng chờ của TA</h2><span class="small">Câu học viên đã chọn gửi và các báo lỗi</span></div>
+      <div class="queue" id="queue"></div>
+    </section>
+    <aside class="side">
+      <section class="panel">
+        <div class="panel-h"><h2>FAQ của lớp</h2><span class="small">38 học viên thấy</span></div>
+        <div class="panel-b"><div class="faq" id="faq"></div></div>
+      </section>
+      <section class="panel">
+        <div class="panel-h"><h2>Mức tự chủ đang áp dụng</h2></div>
+        <div class="panel-b">
+          <dl class="kv">
+            <dt class="mono">tra_cuu_tai_lieu</dt><dd>Tự làm (chỉ đọc)</dd>
+            <dt class="mono">goi_y_bai_tap</dt><dd>Tự làm, từng bước, không đáp số</dd>
+            <dt class="mono">chuyen_TA</dt><dd>Học viên xác nhận, rút lại được</dd>
+            <dt class="mono">dang_FAQ</dt><dd>TA duyệt</dd>
+            <dt>Xác nhận đáp số bài đang mở</dt><dd>Cấm</dd>
+          </dl>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ================= DỮ LIỆU DỰNG CỦA TRACK T2 ================= */
+const SOURCES = {
+  "§3.1": { title: "Trung bình cộng", text: "Tổng các giá trị chia cho số giá trị. Trung bình bị kéo mạnh bởi giá trị ngoại lai." },
+  "§3.2": { title: "Trung vị", text: "Giá trị đứng giữa khi sắp xếp dữ liệu tăng dần. Nếu số giá trị là chẵn, trung vị là trung bình cộng của hai giá trị đứng giữa. Trung vị ít bị ảnh hưởng bởi giá trị ngoại lai, nên thường dùng cho dữ liệu lệch như thu nhập hay giá nhà." },
+  "§3.3": { title: "Phương sai và độ lệch chuẩn", text: "Phương sai đo mức độ phân tán của dữ liệu quanh trung bình. Độ lệch chuẩn là căn bậc hai của phương sai, có cùng đơn vị với dữ liệu. Vì là căn bậc hai, độ lệch chuẩn luôn nhỏ hơn phương sai." },
+  "§3.4": { title: "Giá trị ngoại lai", text: "Giá trị khác hẳn phần lớn dữ liệu. Trước khi bỏ một giá trị ngoại lai, cần hỏi: đây là lỗi nhập liệu hay là dữ liệu thật?" },
+  "§3.5": { title: "Bài tập 3", text: "Lương tháng của 8 nhân viên một phòng (triệu đồng, dựng): 9, 10, 10, 11, 12, 12, 13, 45. (a) Tính trung bình và trung vị. (b) Con số nào mô tả \"lương điển hình\" của phòng tốt hơn? Vì sao?" },
+  "Trang khoá học · Buổi đã mở": { title: "", text: "1, 2, 3" },
+  "Trang khoá học · Đề cương": { title: "", text: "4 Trực quan hoá dữ liệu · 5 Xác suất cơ bản · 6 Phân phối chuẩn · 7 Kiểm định giả thuyết và p-value · 8 Hồi quy tuyến tính · 9 Làm sạch dữ liệu · 10 Dự án cuối khoá" },
+  "Trang khoá học · Công cụ": { title: "", text: "Bài tập làm bằng bảng tính." },
+  "Trang khoá học · Bài tập 2": { title: "", text: "Hạn 06/11/2026 23:59 · đã hết hạn · đáp án công bố 07/11: \"Trung bình cộng của 4, 8, 6, 5, 7 là 6.\"" },
+  "Trang khoá học · Bài tập 3": { title: "", text: "Hạn 13/11/2026 23:59 · đang mở" },
+  "Trang khoá học · Giờ TA": { title: "", text: "08:00–22:00" }
+};
+const NOW = "22:47 12/11";
+
+const DECISIONS = {
+  giang_kem_trich:     { label: "Giảng kèm trích tài liệu", cls: "p-teach" },
+  hoi_lai:             { label: "Hỏi lại cho rõ", cls: "p-ask" },
+  goi_y_buoc:          { label: "Gợi ý từng bước · bài đang mở", cls: "p-hint" },
+  tai_lieu_khong_co:   { label: "Tài liệu không có", cls: "p-none" },
+  tai_lieu_can_xem_lai:{ label: "Tài liệu cần xem lại", cls: "p-none" },
+  buoi_chua_hoc:       { label: "Nội dung buổi sau", cls: "p-later" }
+};
+const CONF = { cao: ["Độ chắc: cao", 3], trung_binh: ["Độ chắc: trung bình", 2], thap: ["Độ chắc: thấp", 1] };
+
+/* ================= KỊCH BẢN MOCK ================= */
+const MOCK = {
+  confirm: {
+    chip: "Xin xác nhận đáp số Bài 3",
+    q: "Bài 3 em tính ra trung bình 15.25, trung vị 11.5, đúng không ạ? Đúng thì em nộp luôn.",
+    a: {
+      quyet_dinh: "goi_y_buoc", do_chac: "cao", bai_dang_mo: true,
+      tra_loi: "Bài tập 3 đang mở (hạn 13/11/2026 23:59) nên mình không xác nhận đáp số. Mình giúp bạn tự kiểm lại cách làm, từng bước một nhé.",
+      cac_buoc: [
+        "Kiểm trung bình: cộng đủ 8 giá trị rồi chia cho 8 (§3.1). Bạn đếm lại xem đã cộng đủ 8 số chưa.",
+        "Kiểm trung vị: dãy đã sắp tăng dần và có 8 giá trị, là số chẵn, nên trung vị là trung bình cộng của hai giá trị đứng giữa (§3.2). Đó là giá trị thứ mấy và thứ mấy trong dãy?",
+        "Câu (b): so giá trị 45 với các giá trị còn lại. §3.1 và §3.4 nói gì về một giá trị như vậy? Phần nhận xét bạn tự viết nhé."
+      ],
+      trich_dan: [
+        { muc: "Trang khoá học · Bài tập 3", doan: "Hạn 13/11/2026 23:59 · đang mở" },
+        { muc: "§3.1", doan: "Tổng các giá trị chia cho số giá trị." },
+        { muc: "§3.2", doan: "Nếu số giá trị là chẵn, trung vị là trung bình cộng của hai giá trị đứng giữa." }
+      ],
+      chuyen_TA: { de_xuat: true, tom_tat: "Học viên muốn được xem lại cách tính trung bình và trung vị Bài tập 3 trước khi nộp (hạn 13/11 23:59). Trợ lý đã gợi ý cách tự kiểm, không xác nhận đáp số." }
+    }
+  },
+  wrongdoc: {
+    chip: "Tài liệu §3.3 có câu sai",
+    q: "Tài liệu ghi độ lệch chuẩn luôn nhỏ hơn phương sai. Vậy phương sai 0.25 thì độ lệch chuẩn phải nhỏ hơn 0.25 hả ạ?",
+    a: {
+      quyet_dinh: "tai_lieu_can_xem_lai", do_chac: "trung_binh",
+      tra_loi: "Câu cuối của §3.3 cần xem lại. Cũng theo §3.3, độ lệch chuẩn là căn bậc hai của phương sai. Căn bậc hai của 0.25 là 0.5, lớn hơn 0.25. Vậy \"luôn nhỏ hơn\" chỉ đúng khi phương sai lớn hơn 1. Mình chưa chắc giảng viên muốn nói ý gì ở câu này, nên bạn nên hỏi lại giảng viên trước khi dùng nó trong bài.",
+      cac_buoc: [],
+      trich_dan: [ { muc: "§3.3", doan: "Vì là căn bậc hai, độ lệch chuẩn luôn nhỏ hơn phương sai." } ],
+      chuyen_TA: { de_xuat: true, tom_tat: "Tài liệu §3.3 có thể sai: câu \"độ lệch chuẩn luôn nhỏ hơn phương sai\" không đúng khi phương sai nhỏ hơn 1 (ví dụ phương sai 0.25 thì độ lệch chuẩn 0.5). Nhờ giảng viên kiểm lại." }
+    }
+  },
+  slide: {
+    chip: "Hỏi \"slide 12\" không tồn tại",
+    q: "Slide 12 buổi 3 nói gì về độ lệch vậy ạ?",
+    a: {
+      quyet_dinh: "tai_lieu_khong_co", do_chac: "cao",
+      tra_loi: "Tài liệu buổi 3 không có slide đánh số, chỉ có các mục §3.1 đến §3.5. Phần nói về độ lệch là §3.3 Phương sai và độ lệch chuẩn. Có phải bạn đang tìm phần này không?",
+      cac_buoc: [], trich_dan: [ { muc: "§3.3", doan: "Độ lệch chuẩn là căn bậc hai của phương sai, có cùng đơn vị với dữ liệu." } ],
+      lua_chon: [ { label: "Đúng, giảng §3.3 cho em", next: "sd" }, { label: "Không, em tìm chỗ khác", next: "other" } ],
+      chuyen_TA: { de_xuat: false }
+    }
+  },
+  vague: {
+    chip: "Câu hỏi mơ hồ \"cái độ lệch ấy\"",
+    q: "Cái độ lệch ấy là gì ạ, em đọc không hiểu.",
+    a: {
+      quyet_dinh: "hoi_lai", do_chac: "thap",
+      tra_loi: "Buổi 3 có hai chỗ nhắc tới chữ \"lệch\". Bạn đang hỏi chỗ nào?",
+      cac_buoc: [], trich_dan: [],
+      lua_chon: [ { label: "Độ lệch chuẩn (§3.3)", next: "sd" }, { label: "Dữ liệu lệch, như thu nhập, giá nhà (§3.2)", next: "skew" } ],
+      chuyen_TA: { de_xuat: false }
+    }
+  },
+  pvalue: {
+    chip: "Hỏi p-value (buổi 7)",
+    q: "p-value là gì ạ? Bạn em bảo p < 0.05 là kết quả đúng.",
+    a: {
+      quyet_dinh: "buoi_chua_hoc", do_chac: "cao",
+      tra_loi: "p-value sẽ học ở buổi 7 \"Kiểm định giả thuyết và p-value\". Nói ngắn: đó là con số dùng khi kiểm định một giả thuyết. Tài liệu buổi 7 chưa mở nên mình chưa giảng sâu, kể cả câu \"p < 0.05 là đúng\" của bạn bạn. Bạn đợi buổi 7, hoặc hỏi giảng viên nhé.",
+      cac_buoc: [], trich_dan: [ { muc: "Trang khoá học · Đề cương", doan: "7 Kiểm định giả thuyết và p-value" }, { muc: "Trang khoá học · Buổi đã mở", doan: "1, 2, 3" } ],
+      chuyen_TA: { de_xuat: false }
+    }
+  },
+  excel: {
+    chip: "Hạn nộp + hàm Excel",
+    q: "Hạn nộp bài 3 là khi nào ạ? Với cả tính độ lệch chuẩn bằng Excel thì dùng hàm gì?",
+    a: {
+      quyet_dinh: "tai_lieu_khong_co", do_chac: "trung_binh",
+      tra_loi: "Hạn Bài tập 3 là 13/11/2026 23:59, theo trang khoá học. Còn tên hàm Excel thì tài liệu buổi 3 không ghi, trang khoá học chỉ nói bài tập làm bằng bảng tính. Mình không đoán tên hàm để bạn khỏi dùng nhầm. Bạn có thể gửi câu này cho TA.",
+      cac_buoc: [], trich_dan: [ { muc: "Trang khoá học · Bài tập 3", doan: "Hạn 13/11/2026 23:59 · đang mở" }, { muc: "Trang khoá học · Công cụ", doan: "Bài tập làm bằng bảng tính." } ],
+      chuyen_TA: { de_xuat: true, tom_tat: "Học viên hỏi nên dùng hàm nào trong bảng tính để tính độ lệch chuẩn. Tài liệu buổi 3 không ghi tên hàm." }
+    }
+  },
+  self: {
+    chip: "Học viên tự chê mình",
+    q: "Em dốt quá, đọc mãi không hiểu trung vị.",
+    a: {
+      quyet_dinh: "giang_kem_trich", do_chac: "cao",
+      tra_loi: "Mình cùng đi từ một ví dụ nhỏ nhé. Theo §3.2, trung vị là giá trị đứng giữa khi sắp xếp dữ liệu tăng dần. Với dãy 2, 5, 9 thì giá trị đứng giữa là 5. Bạn thử với dãy 3, 8, 1, 6, 4: sắp xếp lại trước, rồi tìm giá trị đứng giữa.",
+      cac_buoc: [], trich_dan: [ { muc: "§3.2", doan: "Giá trị đứng giữa khi sắp xếp dữ liệu tăng dần." } ],
+      chuyen_TA: { de_xuat: false }
+    }
+  },
+  sd: {
+    q: null,
+    a: {
+      quyet_dinh: "giang_kem_trich", do_chac: "cao",
+      tra_loi: "Theo §3.3, phương sai đo mức phân tán của dữ liệu quanh trung bình. Độ lệch chuẩn là căn bậc hai của phương sai, nên có cùng đơn vị với dữ liệu: dữ liệu là lương tính bằng triệu đồng thì độ lệch chuẩn cũng tính bằng triệu đồng. Độ lệch chuẩn càng lớn thì dữ liệu càng phân tán. Bạn muốn mình hỏi một câu để tự kiểm tra không?",
+      cac_buoc: [], trich_dan: [ { muc: "§3.3", doan: "Phương sai đo mức độ phân tán của dữ liệu quanh trung bình. Độ lệch chuẩn là căn bậc hai của phương sai, có cùng đơn vị với dữ liệu." } ],
+      chuyen_TA: { de_xuat: false }
+    }
+  },
+  skew: {
+    q: null,
+    a: {
+      quyet_dinh: "giang_kem_trich", do_chac: "cao",
+      tra_loi: "\"Dữ liệu lệch\" ở §3.2 là dữ liệu có vài giá trị rất lớn hoặc rất nhỏ so với phần còn lại, như thu nhập hay giá nhà. Với kiểu dữ liệu này, trung vị ít bị ảnh hưởng hơn trung bình, nên thường được dùng để mô tả giá trị điển hình.",
+      cac_buoc: [], trich_dan: [ { muc: "§3.2", doan: "Trung vị ít bị ảnh hưởng bởi giá trị ngoại lai, nên thường dùng cho dữ liệu lệch như thu nhập hay giá nhà." } ],
+      chuyen_TA: { de_xuat: false }
+    }
+  },
+  other: {
+    q: null,
+    a: {
+      quyet_dinh: "hoi_lai", do_chac: "thap",
+      tra_loi: "Bạn mô tả giúp mình nội dung bạn nhớ được, hoặc chép lại một câu trong tài liệu. Mình sẽ tìm trong §3.1 đến §3.5. Nếu đó là tài liệu khác ngoài buổi 3, bạn hỏi TA nhé.",
+      cac_buoc: [], trich_dan: [], chuyen_TA: { de_xuat: false }
+    }
+  }
+};
+const CHIP_ORDER = ["confirm", "wrongdoc", "slide", "vague", "pvalue", "excel", "self"];
+
+/* ================= STATE ================= */
+const S = {
+  view: "student", mode: "mock", apiKey: "", annotate: false, busy: false,
+  msgs: [], history: [], logs: [],
+  tickets: [
+    { id: 1, kind: "Câu hỏi", student: "HV-12", time: "21:58 12/11", q: "Đáp án Bài 2 là 6, vậy cách cộng là gì ạ?", ai: "Bài tập 2 đã hết hạn và đã có đáp án nên trợ lý giảng đầy đủ: (4 + 8 + 6 + 5 + 7) / 5 = 30 / 5 = 6 (§3.1).", cites: ["§3.1", "Trang khoá học · Bài tập 2"], status: "wait", reply: "", faqOpen: false, faqChecked: false }
+  ],
+  faq: [ { id: 1, q: "Số giá trị là chẵn thì tính trung vị thế nào?", a: "Lấy trung bình cộng của hai giá trị đứng giữa (§3.2).", by: "TA Lan · 09:15 10/11" } ],
+  nextId: 2
+};
+
+/* ================= HELPERS ================= */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = (s) => String(s || "").toLowerCase().normalize("NFC").replace(/["“”'‘’]/g, "").replace(/\s+/g, " ").trim();
+let toastT;
+function toast(t) { const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (el.hidden = true), 2600); }
+
+/* Kiểm trích dẫn: thiết kế chặn lỗi "dẫn nguồn không có" mà câu chữ không cứu được */
+function verifyCites(list) {
+  return (Array.isArray(list) ? list : []).map((c) => {
+    const key = Object.keys(SOURCES).find((k) => norm(k) === norm(c.muc));
+    if (!key) return { muc: c.muc, status: "bad" };
+    const src = SOURCES[key].text;
+    const ok = c.doan ? norm(src).includes(norm(c.doan)) : true;
+    return { muc: key, doan: ok && c.doan ? c.doan : "", status: ok ? "ok" : "partial" };
+  });
+}
+/* Chặn lộ đáp số Bài tập 3 (trung bình 15.25, trung vị 11.5) */
+const ANSWER_RE = [/15\s*[.,]\s*25/, /(^|[^\d.,])11\s*[.,]\s*5(?![\d])/, /122\s*\/\s*8/];
+function leaksAnswer(d) {
+  const txt = [d.tra_loi, ...(d.cac_buoc || [])].join(" ");
+  return ANSWER_RE.some((re) => re.test(txt));
+}
+
+/* ================= RENDER: CHAT ================= */
+function renderChips() {
+  $("chips").innerHTML = CHIP_ORDER.map((k) => `<button class="chip" type="button" data-chip="${k}"><small>Ca</small>${esc(MOCK[k].chip)}</button>`).join("");
+}
+function renderModeLine() {
+  $("mode-line").textContent = S.mode === "mock"
+    ? "Chế độ Mock: câu trả lời viết sẵn theo kịch bản. Bấm một ca ở trên, hoặc gõ câu gần giống."
+    : (S.apiKey ? "Chế độ AI thật: câu hỏi được gửi tới OpenAI cùng tài liệu buổi 3. Mỗi lời gọi được ghi vào log." : "Chế độ AI thật: nhập API key ở cột bên phải trước khi gửi.");
+}
+
+function citeHTML(c, n) {
+  const src = SOURCES[c.muc];
+  const vf = { ok: ["✓ khớp tài liệu", "ok"], partial: ["≈ không nguyên văn, hiện đoạn gốc", "partial"], bad: ["✕ nguồn không có, đã ẩn", "bad"] }[c.status];
+  if (c.status === "bad") return `<div class="cite"${n}><summary><span class="code">${esc(c.muc)}</span><span>Không có mục này trong tài liệu</span><span class="vf bad">${vf[0]}</span></summary></div>`;
+  const text = esc(src.text);
+  const body = c.doan ? text.replace(esc(c.doan), `<mark>${esc(c.doan)}</mark>`) : text;
+  return `<details class="cite"${n}><summary><span class="code">${esc(c.muc)}</span><span>${esc(src.title || "Trang khoá học")}</span><span class="vf ${vf[1]}">${vf[0]}</span></summary><blockquote>${body}</blockquote></details>`;
+}
+
+function aiCardHTML(m, i) {
+  const d = m.data;
+  const dec = DECISIONS[d.quyet_dinh] || DECISIONS.hoi_lai;
+  const conf = CONF[d.do_chac] || CONF.trung_binh;
+  const latest = i === S.msgs.length - 1 || S.msgs.slice(i + 1).every((x) => x.role !== "ai");
+  const N = (n) => (latest ? ` data-n="${n}"` : "");
+  const parts = [];
+
+  parts.push(`<div class="headrow"${N(2)}><span class="pill ${dec.cls}">${esc(dec.label)}</span><span class="pill p-conf"><span class="bar">${[1, 2, 3].map((k) => `<i class="${k <= conf[1] ? "on" : ""}"></i>`).join("")}</span>${esc(conf[0])}</span><span class="pill p-src">${m.source === "openai" ? "AI thật · " + esc(m.model) : "Mock"}</span></div>`);
+
+  if (m.blocked) parts.push(`<div class="blocked">Bộ lọc đã chặn câu trả lời gốc vì có thể chứa đáp số Bài tập 3 đang mở. Câu dưới đây là câu thay thế.</div>`);
+  if (d.bai_dang_mo || d.quyet_dinh === "goi_y_buoc") parts.push(`<div class="forbid"${N(5)}><span>⛔</span><span><b>Bài tập 3 đang mở.</b> Trợ lý không đưa và không xác nhận đáp số, không viết nhận xét hộ.</span></div>`);
+
+  parts.push(`<p>${esc(d.tra_loi)}</p>`);
+
+  const steps = Array.isArray(d.cac_buoc) ? d.cac_buoc : [];
+  if (steps.length) {
+    const shown = steps.slice(0, m.stepsShown).map((s, k) => `<div class="step"><b>Bước ${k + 1}.</b>${esc(s)}</div>`).join("");
+    const more = m.stepsShown < steps.length
+      ? `<button class="btn" type="button" data-act="step" data-i="${i}">Xem gợi ý bước ${m.stepsShown + 1}</button><span>Thử tự làm bước này trước đã.</span>`
+      : `<span>Hết gợi ý. Phần tính và nhận xét cuối cùng là của bạn.</span>`;
+    parts.push(`<div class="steps"${N(4)}>${shown}<div class="steps-foot">${more}</div></div>`);
+  }
+
+  const cites = m.cites || [];
+  if (cites.length) parts.push(`<div class="cites">${cites.map((c, k) => citeHTML(c, k === 0 ? N(3) : "")).join("")}</div>`);
+  else if (d.quyet_dinh !== "hoi_lai") parts.push(`<p class="small">Câu trả lời này không trích được mục nào trong tài liệu.</p>`);
+
+  const opts = Array.isArray(d.lua_chon) ? d.lua_chon : [];
+  if (opts.length) parts.push(`<div class="opts"${N(7)}>${opts.map((o, k) => `<button class="btn" type="button" data-act="opt" data-i="${i}" data-k="${k}">${esc(typeof o === "string" ? o : o.label)}</button>`).join("")}</div>`);
+
+  const ct = d.chuyen_TA || {};
+  if (ct.de_xuat || m.esc !== "none") parts.push(escHTML(m, i, N(6)));
+
+  parts.push(fbHTML(m, i, N(8)));
+  return `<div class="msg ai"><span class="who">Trợ lý AI · ${esc(m.time)}</span><div class="card">${parts.join("")}</div></div>`;
+}
+
+function escHTML(m, i, n) {
+  const sum = esc(m.data.chuyen_TA?.tom_tat || m.lastQ);
+  if (m.esc === "dismissed") return `<div class="esc"${n}><span class="note">Bạn đã chọn không gửi cho TA. <button class="btn ghost" type="button" data-act="esc-draft" data-i="${i}">Mở lại</button></span></div>`;
+  if (m.esc === "sent") {
+    const t = S.tickets.find((x) => x.id === m.ticket);
+    const answered = t && t.status === "done";
+    return `<div class="esc"${n}><span class="t">Đã vào hàng chờ TA · ${esc(m.sentAt)}</span>
+      <p>${sum}</p>
+      <span class="note">${answered ? "TA đã trả lời, xem tin bên dưới." : "Đang ngoài giờ TA (08:00–22:00). TA sẽ xem từ 08:00 ngày 13/11, trước hạn Bài tập 3 (23:59 13/11)."}</span>
+      ${answered ? "" : `<div class="opts"><button class="btn" type="button" data-act="esc-withdraw" data-i="${i}">Rút lại</button></div>`}</div>`;
+  }
+  if (m.esc === "withdrawn") return `<div class="esc"${n}><span class="note">Bạn đã rút câu hỏi khỏi hàng chờ TA. <button class="btn ghost" type="button" data-act="esc-draft" data-i="${i}">Gửi lại</button></span></div>`;
+  return `<div class="esc"${n}><span class="t">Soạn sẵn cho TA · chưa gửi</span>
+    <p>${sum}</p>
+    <span class="note">Bạn xem lại rồi mới gửi. TA trả lời trong giờ 08:00–22:00.</span>
+    <div class="opts"><button class="btn ta" type="button" data-act="esc-send" data-i="${i}">Gửi cho TA</button><button class="btn ghost" type="button" data-act="esc-dismiss" data-i="${i}">Không cần</button></div></div>`;
+}
+
+function fbHTML(m, i, n) {
+  if (m.fb === "sent") return `<div class="fb"${n}>Đã gửi báo lỗi "${esc(m.fbReason)}" vào hàng chờ TA. Cảm ơn bạn.</div>`;
+  if (m.fb === "open") return `<div class="fb"${n}><span>Sai ở chỗ nào?</span>${["Sai kiến thức", "Trích sai tài liệu", "Lộ đáp án", "Khó hiểu"].map((r) => `<button class="btn" type="button" data-act="fb-send" data-i="${i}" data-r="${r}">${r}</button>`).join("")}<button class="btn ghost" type="button" data-act="fb-close" data-i="${i}">Đóng</button></div>`;
+  return `<div class="fb"${n}><button class="btn ghost" type="button" data-act="fb-open" data-i="${i}">⚑ Báo câu này sai</button></div>`;
+}
+
+function renderLog() {
+  const html = S.msgs.map((m, i) => {
+    if (m.role === "user") return `<div class="msg user"><span class="who">Bạn · ${esc(m.time)}</span><div class="bubble">${esc(m.text)}</div></div>`;
+    if (m.role === "ta") return `<div class="msg ta"><span class="who">TA ${esc(m.name)} · ${esc(m.time)}</span><div class="bubble">${esc(m.text)}</div></div>`;
+    if (m.role === "error") return `<div class="msg ai"><span class="who">Lỗi kết nối</span><div class="blocked">${esc(m.text)}</div></div>`;
+    return aiCardHTML(m, i);
+  }).join("") + (S.busy ? `<div class="typing">Trợ lý đang tra tài liệu…</div>` : "");
+  $("log").innerHTML = html;
+}
+
+/* ================= RENDER: TA ================= */
+function renderTA() {
+  const open = S.tickets.filter((t) => t.status === "wait").length;
+  $("ta-count").textContent = open ? `(${open})` : "";
+  $("queue").innerHTML = S.tickets.length ? S.tickets.slice().reverse().map((t) => {
+    const st = { wait: ["Chờ TA", "s-wait"], done: ["Đã trả lời", "s-done"], withdrawn: ["Học viên đã rút", "s-off"] }[t.status];
+    const faqBox = t.faqOpen ? `<div class="confirm" data-n="9">
+        <strong>Đăng lên FAQ cả lớp?</strong>
+        <span>38 học viên sẽ thấy. Gỡ được, nhưng ai đã đọc thì đã đọc. Không đăng đáp số bài đang mở.</span>
+        <label class="chk" style="color:inherit"><input type="checkbox" data-act="faq-check" data-id="${t.id}" ${t.faqChecked ? "checked" : ""}> Tôi đã kiểm nội dung khớp tài liệu</label>
+        <div class="opts"><button class="btn ta" type="button" data-act="faq-post" data-id="${t.id}" ${t.faqChecked && t.reply.trim() ? "" : "disabled"}>Duyệt và đăng</button><button class="btn ghost" type="button" data-act="faq-cancel" data-id="${t.id}">Huỷ</button></div>
+        ${t.reply.trim() ? "" : `<span class="small">Cần có câu trả lời của TA trước khi đăng.</span>`}
+      </div>` : "";
+    const actions = t.status === "withdrawn" ? "" : `
+      <textarea data-act="reply-text" data-id="${t.id}" aria-label="Trả lời của TA" placeholder="Trả lời học viên…">${esc(t.reply)}</textarea>
+      <div class="opts">
+        <button class="btn primary" type="button" data-act="reply-send" data-id="${t.id}" ${t.status === "done" ? "disabled" : ""}>${t.status === "done" ? "Đã gửi trả lời" : "Gửi trả lời"}</button>
+        <button class="btn ta" type="button" data-act="faq-open" data-id="${t.id}">Đề xuất đăng FAQ</button>
+      </div>${faqBox}`;
+    return `<article class="ticket">
+      <div class="meta"><span class="pill ${t.kind === "Câu hỏi" ? "p-teach" : "p-none"}">${esc(t.kind)}</span><span class="pill ${st[1]}">${st[0]}</span><span>${esc(t.student)} · ${esc(t.time)}</span></div>
+      <q>${esc(t.q)}</q>
+      <div class="ai"><strong>Trợ lý đã trả lời:</strong> ${esc(t.ai)}${t.cites?.length ? `<br><span class="mono">${t.cites.map(esc).join(" · ")}</span>` : ""}</div>
+      ${actions}
+    </article>`;
+  }).join("") : `<p class="small">Chưa có câu nào trong hàng chờ.</p>`;
+  $("faq").innerHTML = S.faq.length ? S.faq.map((f) => `<div class="faq-item"><strong>${esc(f.q)}</strong><span>${esc(f.a)}</span><span class="small">${esc(f.by)} · <button class="btn ghost" type="button" data-act="faq-remove" data-id="${f.id}">Gỡ</button></span></div>`).join("") : `<p class="small">FAQ đang trống.</p>`;
+}
+
+function renderLogs() {
+  $("log-count").textContent = `${S.logs.length} lời gọi`;
+  $("logview").textContent = S.logs.length ? JSON.stringify(S.logs, null, 2) : "Chưa có lời gọi nào. Bật \"AI thật\", nhập key rồi gửi một câu hỏi.";
+}
+function render() { renderLog(); renderTA(); renderLogs(); renderModeLine(); }
+
+/* ================= ACTIONS ================= */
+function pushAI(data, extra = {}) {
+  const verified = verifyCites(data.trich_dan);
+  S.msgs.push({ role: "ai", data, cites: verified, stepsShown: 1, esc: "none", fb: "none", time: NOW.split(" ")[0], lastQ: extra.q || "", source: extra.source || "mock", model: extra.model || "", blocked: !!extra.blocked });
+}
+
+function askMock(key, text) {
+  const sc = MOCK[key];
+  S.msgs.push({ role: "user", text: text ?? sc.q, time: NOW.split(" ")[0] });
+  pushAI(sc.a, { q: text ?? sc.q });
+  render();
+}
+function matchMock(text) {
+  const t = norm(text);
+  if (/slide/.test(t)) return "slide";
+  if (/p-?value|p </.test(t)) return "pvalue";
+  if (/excel|hàm|hạn/.test(t)) return "excel";
+  if (/dốt|ngu|kém/.test(t)) return "self";
+  if (/luôn nhỏ hơn|0\.25|0,25/.test(t)) return "wrongdoc";
+  if (/đúng không|xác nhận|15|11[.,]5|nộp/.test(t)) return "confirm";
+  if (/lệch/.test(t)) return "vague";
+  return null;
+}
+
+function systemPrompt() {
+  const docs = Object.entries(SOURCES).map(([k, v]) => `- ${k}${v.title ? " " + v.title : ""}: ${v.text}`).join("\n");
+  return `Bạn là trợ lý học bài trên trang khoá học "Nhập môn phân tích dữ liệu". Thời điểm hiện tại: Thứ Năm 12/11/2026, 22:47 (ngoài giờ TA 08:00–22:00). Học viên đang học buổi 3 "Thống kê mô tả".
+
+NGUỒN DUY NHẤT bạn được dùng (mã mục ở đầu dòng):
+${docs}
+
+LUẬT BẮT BUỘC:
+1. Chỉ dùng nguồn trên. Mọi câu về nội dung phải trích mã mục (§3.x hoặc "Trang khoá học · ..."). Không có căn cứ thì nói "tài liệu không có".
+2. Nội dung buổi chưa mở (4–10): nói buổi nào sẽ học, giới thiệu tối đa một câu.
+3. Bài tập 3 đang mở: chỉ gợi ý từng bước (tối đa 3 bước), KHÔNG đưa và KHÔNG xác nhận đáp số, không viết câu nhận xét hộ, không viết ra con số kết quả.
+4. Bài tập 2 đã hết hạn và có đáp án: được giải thích đầy đủ.
+5. Hạn nộp chỉ lấy từ trang khoá học.
+6. Tài liệu có thể có câu sai. Nếu thấy, nói câu nào cần xem lại và vì sao, khuyên báo giảng viên; không khẳng định tài liệu đúng khi chưa kiểm.
+7. Không nói về nguồn không có (ví dụ "slide 12": tài liệu buổi 3 không có slide đánh số). Không nói đã làm việc bạn không làm được (ví dụ không nói "đã báo TA"; bạn chỉ được ĐỀ XUẤT chuyển TA, học viên tự quyết định gửi).
+8. Không nhận xét năng lực người học.
+9. Câu hỏi mơ hồ thì hỏi lại một câu kèm 2–3 lựa chọn.
+Trả lời tiếng Việt, ngắn, thân thiện.
+
+Trả về DUY NHẤT một JSON object theo dạng:
+{
+ "quyet_dinh": "giang_kem_trich" | "hoi_lai" | "goi_y_buoc" | "tai_lieu_khong_co" | "tai_lieu_can_xem_lai" | "buoi_chua_hoc",
+ "do_chac": "cao" | "trung_binh" | "thap",
+ "bai_dang_mo": true nếu câu hỏi liên quan Bài tập 3, ngược lại false,
+ "tra_loi": "câu trả lời chính",
+ "cac_buoc": ["bước 1", "bước 2"] (chỉ khi goi_y_buoc, ngược lại []),
+ "trich_dan": [{"muc": "§3.2", "doan": "chép NGUYÊN VĂN một đoạn ngắn từ nguồn"}],
+ "lua_chon": ["lựa chọn 1", "lựa chọn 2"] (chỉ khi hoi_lai, ngược lại []),
+ "chuyen_TA": {"de_xuat": true|false, "tom_tat": "tóm tắt câu hỏi gửi TA nếu đề xuất"}
+}`;
+}
+
+async function askReal(text) {
+  if (!S.apiKey) { toast("Nhập API key trước khi gửi."); $("key").focus(); return; }
+  const model = $("model").value.trim() || "gpt-4o-mini";
+  S.msgs.push({ role: "user", text, time: NOW.split(" ")[0] });
+  S.history.push({ role: "user", content: text });
+  S.busy = true; render();
+  const messages = [{ role: "system", content: systemPrompt() }, ...S.history.slice(-8)];
+  const t0 = performance.now();
+  const entry = { thoi_gian: new Date().toISOString(), model, endpoint: "POST https://api.openai.com/v1/chat/completions", cau_hoi: text, phan_hoi_tho: null, ket_qua_sau_kiem: null, latency_ms: null, loi: null };
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + S.apiKey },
+      body: JSON.stringify({ model, messages, response_format: { type: "json_object" } })
+    });
+    entry.latency_ms = Math.round(performance.now() - t0);
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = body?.error?.message || res.statusText;
+      entry.loi = `HTTP ${res.status}: ${msg}`;
+      const fix = res.status === 401 ? "API key không đúng hoặc đã bị thu hồi. Kiểm tra lại key." : res.status === 404 ? `Model "${model}" không dùng được với key này. Đổi tên model ở cột bên phải.` : res.status === 429 ? "Hết hạn mức hoặc gọi quá nhanh. Đợi một lúc hoặc kiểm tra billing." : "Xem chi tiết trong log.";
+      S.msgs.push({ role: "error", text: `OpenAI trả lỗi ${res.status}. ${fix}` });
+      setKeyStatus(res.status === 401 ? "bad" : "ok");
+      return;
+    }
+    const raw = body.choices?.[0]?.message?.content || "{}";
+    entry.phan_hoi_tho = raw;
+    let d;
+    try { d = JSON.parse(raw); } catch { d = { quyet_dinh: "hoi_lai", do_chac: "thap", tra_loi: "Mình chưa đọc được câu trả lời. Bạn hỏi lại giúp mình nhé.", trich_dan: [], chuyen_TA: { de_xuat: false } }; }
+    if (!DECISIONS[d.quyet_dinh]) d.quyet_dinh = "hoi_lai";
+    let blocked = false;
+    if (leaksAnswer(d)) {
+      blocked = true;
+      d = { ...d, quyet_dinh: "goi_y_buoc", bai_dang_mo: true, tra_loi: "Bài tập 3 đang mở nên mình không đưa và không xác nhận đáp số. Bạn xem lại cách tính trung bình (§3.1) và trung vị khi số giá trị là chẵn (§3.2) rồi tự kiểm nhé.", cac_buoc: [], trich_dan: [{ muc: "§3.1", doan: "Tổng các giá trị chia cho số giá trị." }, { muc: "§3.2", doan: "Nếu số giá trị là chẵn, trung vị là trung bình cộng của hai giá trị đứng giữa." }] };
+    }
+    S.history.push({ role: "assistant", content: JSON.stringify(d) });
+    pushAI(d, { q: text, source: "openai", model, blocked });
+    const last = S.msgs[S.msgs.length - 1];
+    entry.ket_qua_sau_kiem = { quyet_dinh: d.quyet_dinh, do_chac: d.do_chac, bi_chan_vi_lo_dap_so: blocked, trich_dan: last.cites.map((c) => `${c.muc}: ${c.status}`) };
+    setKeyStatus("ok");
+  } catch (e) {
+    entry.loi = String(e);
+    S.msgs.push({ role: "error", text: "Không gọi được OpenAI: kiểm tra mạng, hoặc mở file này bằng trình duyệt thường (không qua trang xem trước có chặn kết nối)." });
+  } finally {
+    S.logs.push(entry);
+    S.busy = false; render();
+  }
+}
+
+function setKeyStatus(s) {
+  const el = $("key-status");
+  el.className = "status " + (s === "ok" ? "ok" : s === "bad" ? "bad" : "");
+  el.textContent = s === "ok" ? "Đã kết nối" : s === "bad" ? "Key bị từ chối" : (S.apiKey ? "Có key, chưa gọi" : "Chưa có key");
+}
+
+function send(text) {
+  text = text.trim();
+  if (!text || S.busy) return;
+  $("q").value = "";
+  if (S.mode === "real") return askReal(text);
+  const k = matchMock(text);
+  if (k) return askMock(k, text);
+  S.msgs.push({ role: "user", text, time: NOW.split(" ")[0] });
+  pushAI({ quyet_dinh: "hoi_lai", do_chac: "thap", tra_loi: "Chế độ Mock chỉ có các ca viết sẵn. Bạn chọn một ca ở dưới, hoặc bật \"AI thật\" để hỏi tự do.", cac_buoc: [], trich_dan: [], chuyen_TA: { de_xuat: false } });
+  render();
+}
+
+function createTicket(m, kind, extraQ) {
+  const t = { id: S.nextId++, kind, student: "HV-07 (bạn)", time: NOW, q: extraQ || m.data.chuyen_TA?.tom_tat || m.lastQ, ai: m.data.tra_loi, cites: (m.cites || []).filter((c) => c.status !== "bad").map((c) => c.muc), status: "wait", reply: "", faqOpen: false, faqChecked: false, msgRef: m };
+  S.tickets.push(t);
+  return t;
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  const act = b.dataset.act;
+  const m = b.dataset.i != null ? S.msgs[+b.dataset.i] : null;
+  const t = b.dataset.id != null ? S.tickets.find((x) => x.id === +b.dataset.id) : null;
+
+  if (b.dataset.chip) {
+    if (S.mode === "real") send(MOCK[b.dataset.chip].q); else askMock(b.dataset.chip);
+    return;
+  }
+  switch (act) {
+    case "step": m.stepsShown++; break;
+    case "opt": {
+      const o = m.data.lua_chon[+b.dataset.k];
+      const label = typeof o === "string" ? o : o.label;
+      if (S.mode === "mock" && o.next) { S.msgs.push({ role: "user", text: label, time: NOW.split(" ")[0] }); pushAI(MOCK[o.next].a, { q: label }); }
+      else return send(label);
+      break;
+    }
+    case "esc-send": { const tk = createTicket(m, "Câu hỏi"); m.esc = "sent"; m.ticket = tk.id; m.sentAt = NOW; toast("Đã đưa vào hàng chờ TA."); break; }
+    case "esc-dismiss": m.esc = "dismissed"; break;
+    case "esc-draft": m.esc = "draft"; break;
+    case "esc-withdraw": { const tk = S.tickets.find((x) => x.id === m.ticket); if (tk) tk.status = "withdrawn"; m.esc = "withdrawn"; toast("Đã rút khỏi hàng chờ TA."); break; }
+    case "fb-open": m.fb = "open"; break;
+    case "fb-close": m.fb = "none"; break;
+    case "fb-send": m.fb = "sent"; m.fbReason = b.dataset.r; createTicket(m, "Báo sai: " + b.dataset.r, `Học viên báo câu trả lời của trợ lý: "${b.dataset.r}". Câu hỏi gốc: ${m.lastQ}`); break;
+    case "reply-send": {
+      if (!t.reply.trim()) { toast("Viết câu trả lời trước khi gửi."); return; }
+      t.status = "done";
+      if (t.msgRef || t.student.includes("bạn")) S.msgs.push({ role: "ta", name: "Lan", text: t.reply.trim(), time: "08:05 13/11" });
+      toast("Đã gửi trả lời cho học viên.");
+      break;
+    }
+    case "faq-open": t.faqOpen = true; break;
+    case "faq-cancel": t.faqOpen = false; t.faqChecked = false; break;
+    case "faq-post": S.faq.unshift({ id: Date.now(), q: t.q, a: t.reply.trim(), by: "TA Lan · 08:06 13/11" }); t.faqOpen = false; toast("Đã đăng lên FAQ của lớp."); break;
+    case "faq-remove": S.faq = S.faq.filter((f) => f.id !== +b.dataset.id); toast("Đã gỡ khỏi FAQ."); break;
+    default: return;
+  }
+  render();
+});
+
+document.addEventListener("input", (e) => {
+  const el = e.target;
+  if (el.dataset.act === "reply-text") { const t = S.tickets.find((x) => x.id === +el.dataset.id); t.reply = el.value; const box = el.closest(".ticket").querySelector('[data-act="faq-post"]'); if (box) box.disabled = !(t.faqChecked && t.reply.trim()); }
+});
+document.addEventListener("change", (e) => {
+  const el = e.target;
+  if (el.dataset.act === "faq-check") { const t = S.tickets.find((x) => x.id === +el.dataset.id); t.faqChecked = el.checked; renderTA(); }
+});
+
+$("form").addEventListener("submit", (e) => { e.preventDefault(); send($("q").value); });
+$("q").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send($("q").value); } });
+
+function setView(v) {
+  S.view = v;
+  $("student-view").hidden = v !== "student"; $("ta-view").hidden = v !== "ta";
+  $("v-student").setAttribute("aria-pressed", v === "student"); $("v-ta").setAttribute("aria-pressed", v === "ta");
+}
+function setMode(md) {
+  S.mode = md;
+  $("m-mock").setAttribute("aria-pressed", md === "mock"); $("m-real").setAttribute("aria-pressed", md === "real");
+  $("real-panel").hidden = md !== "real";
+  renderModeLine();
+}
+$("v-student").onclick = () => setView("student");
+$("v-ta").onclick = () => setView("ta");
+$("m-mock").onclick = () => setMode("mock");
+$("m-real").onclick = () => setMode("real");
+$("annot").onchange = (e) => document.getElementById("app").classList.toggle("annotate", e.target.checked);
+$("key").addEventListener("input", (e) => { S.apiKey = e.target.value.trim(); setKeyStatus(); renderModeLine(); });
+
+$("copy-log").onclick = async () => {
+  const txt = JSON.stringify(S.logs, null, 2);
+  try { await navigator.clipboard.writeText(txt); toast("Đã sao chép log."); }
+  catch { const r = document.createRange(); r.selectNodeContents($("logview")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Đã chọn log, bấm Ctrl+C để sao chép."); }
+};
+$("dl-log").onclick = () => {
+  if (!S.logs.length) { toast("Chưa có lời gọi nào để tải."); return; }
+  const blob = new Blob([JSON.stringify(S.logs, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "ai-log.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+/* ================= KHỞI TẠO: mở sẵn ca khó nhất ================= */
+renderChips();
+S.msgs.push({ role: "user", text: MOCK.confirm.q, time: NOW.split(" ")[0] });
+pushAI(MOCK.confirm.a, { q: MOCK.confirm.q });
+render();
+})();
+</script>
+</body>
+</html>
