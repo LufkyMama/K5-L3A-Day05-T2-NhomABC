@@ -196,6 +196,10 @@ pre.logview { margin: 0; max-height: 220px; overflow: auto; background: var(--su
   background: var(--badge); color: #fff; font: 700 11px/20px var(--font-body); text-align: center;
   box-shadow: 0 0 0 2px var(--surface); pointer-events: none;
 }
+/* Nhãn trên chữ ngắn đặt sang góc phải để không che nội dung */
+.annotate .vf[data-n]::after, .annotate .forbid[data-n]::after, .annotate p.small[data-n]::after { left: auto; right: -12px; top: -16px; }
+.annotate .vf[data-n] { margin-right: 18px; }
+.annotate .forbid[data-n] { padding-right: 18px; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 20; max-width: calc(100% - 32px); }
 @media (prefers-reduced-motion: no-preference) { .msg { animation: in .18s ease-out; } @keyframes in { from { transform: translateY(4px); opacity: .6; } to { transform: none; opacity: 1; } } }
 </style>
@@ -283,9 +287,9 @@ pre.logview { margin: 0; max-height: 220px; overflow: auto; background: var(--su
             <li><span class="n">B3</span><span>Em đang nghĩ… · Dừng gợi ý · Hỏi TA · Gợi ý đang lộ đáp án<span class="lv">HAX G9 · PAIR Errors</span></span></li>
             <li><h3 style="grid-column:1/-1">Mức tự chủ (spec §4)</h3></li>
             <li><span class="n">C1</span><span>Trích dẫn tự hiện, có dấu kiểm khớp tài liệu<span class="lv">tra_cuu_tai_lieu · tự làm</span></span></li>
-            <li><span class="n">C2</span><span>Báo lỗi tài liệu tự chuyển TA, học viên thấy nội dung và rút lại được. Câu hỏi riêng của học viên đi qua bản nháp, học viên tự gửi<span class="lv">chuyen_TA · tự làm, có hoàn tác</span></span></li>
+            <li><span class="n">C2</span><span>Bản nháp “Chưa gửi TA”: học viên sửa, gửi hoặc huỷ; gửi rồi vẫn rút lại được. “Đã chuyển” chỉ hiện sau khi gửi thành công<span class="lv">chuyen_TA · cần học viên xác nhận</span></span></li>
             <li><span class="n">C3</span><span>Bước đầu tự gửi; gợi ý sâu hơn vào hàng chờ TA duyệt; đáp số, xác nhận đúng/sai, viết hộ: cấm, không có nút<span class="lv">goi_y_bai_tap · tách theo trạng thái bài</span></span></li>
-            <li><span class="n">C4</span><span>AI chỉ soạn nháp FAQ; đăng cần duyệt, câu có cờ “tài liệu có thể sai” chỉ giảng viên duyệt<span class="lv">soan_FAQ tự làm · dang_FAQ cần duyệt</span></span></li>
+            <li><span class="n">C4</span><span>AI chỉ soạn nháp FAQ. Lỗi tài liệu thành nháp ẩn danh tới giảng viên dù học viên không gửi TA. Đăng cần duyệt; câu có cờ “tài liệu có thể sai” chỉ giảng viên duyệt<span class="lv">soan_FAQ tự làm · dang_FAQ cần duyệt</span></span></li>
           </ul>
         </div>
       </section>
@@ -328,8 +332,8 @@ pre.logview { margin: 0; max-height: 220px; overflow: auto; background: var(--su
           <dl class="kv">
             <dt class="mono">tra_cuu_tai_lieu</dt><dd>Tự làm, chỉ buổi đã mở</dd>
             <dt class="mono">goi_y_bai_tap</dt><dd>Bài hết hạn: tự làm, giải đủ · Bài đang mở: bước đầu tự làm, sâu hơn TA duyệt, đáp số/viết hộ cấm</dd>
-            <dt class="mono">chuyen_TA</dt><dd>Tự làm, có rút lại (báo lỗi tài liệu) · Câu hỏi riêng: học viên xem nháp rồi gửi</dd>
-            <dt class="mono">soan_FAQ</dt><dd>Tự làm (chỉ nháp)</dd>
+            <dt class="mono">chuyen_TA</dt><dd>Cần học viên xác nhận: AI soạn nháp, học viên xem, sửa rồi gửi; rút lại được</dd>
+            <dt class="mono">soan_FAQ</dt><dd>Tự làm (chỉ nháp). Lỗi tài liệu: nháp ẩn danh, chỉ có đoạn tài liệu</dd>
             <dt class="mono">dang_FAQ</dt><dd>Cần duyệt · cờ “tài liệu có thể sai”: chỉ giảng viên · không đăng về Bài tập 3 trước hạn · không tự đăng khi quá hạn duyệt</dd>
           </dl>
         </div>
@@ -380,7 +384,7 @@ const SC = {
       tra_loi: "Mình hiểu bạn đang gấp. Bài tập 3 còn mở đến 13/11/2026 23:59 theo trang khoá học, nên mình chỉ hỗ trợ bước đầu và không viết hộ câu (b). Nhìn 8 con số ở §3.5, có giá trị nào khác hẳn phần lớn dữ liệu theo định nghĩa ở §3.4 không? Bạn thử tìm trước nhé.",
       trich_dan: [ { muc: "§3.4", doan: "Giá trị khác hẳn phần lớn dữ liệu." }, { muc: "§3.5", doan: "9, 10, 10, 11, 12, 12, 13, 45" } ],
       nhap_hoi_TA: "Em đang làm câu (b) Bài tập 3 và đang kẹt ở chỗ: …", goi_y_sau: DEEP_DRAFT } },
-  c8bad: { chip: "#8 · AI đã lỡ lộ đáp án (đường sửa)", group: "core", bad: "B",
+  c8bad: { chip: "#8b · Mô phỏng lỗi: AI lộ đáp án", group: "core", bad: "B",
     q: "Gợi ý câu (b) bài 3 cho em với, em không biết bắt đầu từ đâu",
     a: { quyet_dinh: "goi_y_buoc_dau", bai_dang_mo: true, controls: "B",
       tra_loi: "Theo §3.2, trung vị thường dùng cho dữ liệu lệch như thu nhập, còn 45 là giá trị ngoại lai kéo trung bình lên (§3.1). Vậy câu (b) bạn chọn trung vị là được.",
@@ -388,13 +392,13 @@ const SC = {
   c1: { chip: "#1 · Tài liệu §3.3 có câu sai", group: "core",
     q: "Tài liệu ghi độ lệch chuẩn luôn nhỏ hơn phương sai, mà em tính phương sai 0,25 ra độ lệch chuẩn 0,5. Em tính sai ở đâu ạ??",
     a: { quyet_dinh: "tai_lieu_can_xem_lai", controls: "A",
-      tra_loi: "Bạn tính đúng: √0,25 = 0,5. Theo định nghĩa ở tài liệu buổi 3, §3.3, độ lệch chuẩn là căn bậc hai của phương sai. Nhưng cùng mục có câu “độ lệch chuẩn luôn nhỏ hơn phương sai”; ví dụ bạn đưa cho thấy câu này cần giảng viên xem lại. Mình không dùng câu đó để kết luận bạn tính sai và không tự công bố đính chính thay giảng viên. Mình chuyển câu này cho TA để nhờ giảng viên xác minh, trạng thái ở ngay bên dưới. TA làm việc trở lại từ 08:00 ngày 13/11; chưa có giờ phản hồi được xác nhận.",
+      tra_loi: "Bạn tính đúng: √0,25 = 0,5. Theo định nghĩa ở tài liệu buổi 3, §3.3, độ lệch chuẩn là căn bậc hai của phương sai. Nhưng cùng mục có câu “độ lệch chuẩn luôn nhỏ hơn phương sai”; ví dụ bạn đưa cho thấy câu này cần giảng viên xem lại. Mình không dùng câu đó để kết luận bạn tính sai và không tự công bố đính chính thay giảng viên. Bạn có thể xem trước câu hỏi gửi TA bên dưới. TA làm việc trở lại từ 08:00 ngày 13/11; chưa có giờ phản hồi được xác nhận.",
       phep_tinh: "√0,25 = 0,5", phep_kiem: "0,5 × 0,5 = 0,25",
       trich_dan: [ { muc: "§3.3", doan: "Độ lệch chuẩn là căn bậc hai của phương sai, có cùng đơn vị với dữ liệu." }, { muc: "§3.3", doan: FLAG_SENTENCE } ],
       bao_loi: { muc: "§3.3", cau: FLAG_SENTENCE, ly_do: "Học viên tính phương sai 0,25 ra độ lệch chuẩn 0,5, lớn hơn phương sai. Câu chỉ đúng khi phương sai lớn hơn 1." },
       nhap_hoi_TA: "Em tính phương sai 0,25 ra độ lệch chuẩn 0,5, nhưng §3.3 ghi “độ lệch chuẩn luôn nhỏ hơn phương sai”. Nhờ TA hỏi giảng viên giúp em câu nào đúng ạ.",
       nhap_FAQ: { hoi: "Độ lệch chuẩn có luôn nhỏ hơn phương sai không?", dap: "Theo §3.3, độ lệch chuẩn là căn bậc hai của phương sai. Với phương sai 0,25 thì độ lệch chuẩn là 0,5. Câu “luôn nhỏ hơn” trong §3.3 đang chờ giảng viên xác minh.", count: 3 } } },
-  c1bad: { chip: "#1 · AI đã lỡ nói “bạn tính sai” (đường sửa)", group: "core", bad: "A",
+  c1bad: { chip: "#1b · Mô phỏng lỗi: AI nói “bạn tính sai”", group: "core", bad: "A",
     q: "Tài liệu ghi độ lệch chuẩn luôn nhỏ hơn phương sai, mà em ra 0,5 với phương sai 0,25. Em sai ở đâu ạ?",
     a: { quyet_dinh: "giang_kem_trich", controls: "A",
       tra_loi: "Theo §3.3, độ lệch chuẩn luôn nhỏ hơn phương sai, nên độ lệch chuẩn 0,5 với phương sai 0,25 là chưa đúng. Bạn kiểm tra lại phép tính nhé.",
@@ -451,7 +455,7 @@ const FOLLOW = {
   c8persist: { quyet_dinh: "goi_y_buoc_dau", bai_dang_mo: true, controls: "B", tra_loi: "Mình vẫn giữ giới hạn đã nói cho Bài tập 3 đang mở: không đưa đáp án, kể cả lần này. Nếu bạn muốn học khái niệm bằng một bài đã có đáp án, mình giải đầy đủ Bài tập 2 (đã hết hạn, đáp án công bố 07/11) cho bạn xem.", trich_dan: [ { muc: "Trang khoá học · Bài tập 3", doan: "Hạn 13/11/2026 23:59 · đang mở" }, { muc: "Trang khoá học · Bài tập 2", doan: "đã hết hạn" } ], lua_chon: [ { label: "Giải Bài tập 2 cho em", next: "bt2" } ], goi_y_sau: DEEP_DRAFT },
   bt2: { quyet_dinh: "giang_kem_trich", tra_loi: "Bài tập 2: theo §3.1, trung bình là tổng các giá trị chia cho số giá trị. 4 + 8 + 6 + 5 + 7 = 30, có 5 giá trị, nên trung bình là 30 ÷ 5 = 6, đúng với đáp án công bố 07/11.", trich_dan: [ { muc: "§3.1", doan: "Tổng các giá trị chia cho số giá trị." }, { muc: "Trang khoá học · Bài tập 2", doan: "Trung bình cộng của 4, 8, 6, 5, 7 là 6." } ] },
   corrA: { quyet_dinh: "sua_loi", controls: "A",
-    tra_loi: "Xin lỗi, câu trả lời trước của mình đã kết luận sai về phép tính của bạn. √0,25 = 0,5 là đúng. Mình đã dựa vào câu “luôn nhỏ hơn” ở §3.3 mà chưa kiểm tra mâu thuẫn. Câu đó cần giảng viên xem lại; mình chưa thể coi nó là căn cứ để bác phép tính của bạn. Mình chuyển câu này cho TA để nhờ giảng viên xác minh, trạng thái ở ngay bên dưới.",
+    tra_loi: "Xin lỗi, câu trả lời trước của mình đã kết luận sai về phép tính của bạn. √0,25 = 0,5 là đúng. Mình đã dựa vào câu “luôn nhỏ hơn” ở §3.3 mà chưa kiểm tra mâu thuẫn. Câu đó cần giảng viên xem lại; mình chưa thể coi nó là căn cứ để bác phép tính của bạn. Bạn có thể xem trước câu hỏi gửi TA để nhờ xác minh tài liệu.",
     phep_tinh: "√0,25 = 0,5", phep_kiem: "0,5 × 0,5 = 0,25",
     trich_dan: [ { muc: "§3.3", doan: "Độ lệch chuẩn là căn bậc hai của phương sai, có cùng đơn vị với dữ liệu." }, { muc: "§3.3", doan: FLAG_SENTENCE } ],
     bao_loi: { muc: "§3.3", cau: FLAG_SENTENCE, ly_do: "Trợ lý đã dựa vào câu này để bác phép tính đúng của học viên (phương sai 0,25, độ lệch chuẩn 0,5)." },
@@ -518,38 +522,43 @@ function addAI(data, opts = {}) {
     blocked = true;
     d = { ...FOLLOW.c8self, tra_loi: "Bài tập 3 còn mở đến 13/11/2026 23:59 nên mình không đưa, không xác nhận đáp số và không viết hộ nhận xét. " + FOLLOW.c8self.tra_loi };
   }
+  /* §3.1 loại "từ chối suông": bài đang mở mà AI không đưa câu hỏi bước đầu có trích § thì trang tự bổ sung câu bước đầu chuẩn của §3.3 */
+  let patched = false;
+  if (!bad && !blocked && opts.source === "openai" && d.bai_dang_mo) {
+    const okCite = verifyCites(d.trich_dan, true).some((c) => c.status === "ok" && c.muc.startsWith("§"));
+    if (d.quyet_dinh !== "goi_y_buoc_dau" || !okCite) {
+      patched = true;
+      const base = String(d.tra_loi || "").trim();
+      d = { ...d, quyet_dinh: "goi_y_buoc_dau", controls: "B",
+        tra_loi: (base ? base + " " : "") + "Bài tập 3 còn mở đến 13/11/2026 23:59 theo trang khoá học, nên mình chỉ hỗ trợ bước đầu. Nhìn 8 con số ở §3.5, có giá trị nào khác hẳn phần lớn dữ liệu theo định nghĩa ở §3.4 không? Bạn thử tìm trước nhé.",
+        trich_dan: [ ...(Array.isArray(d.trich_dan) ? d.trich_dan : []), { muc: "§3.4", doan: "Giá trị khác hẳn phần lớn dữ liệu." }, { muc: "§3.5", doan: "9, 10, 10, 11, 12, 12, 13, 45" } ] };
+      if (leakIssues(d.tra_loi).length) { blocked = true; patched = false; d = { ...FOLLOW.c8self }; }
+    }
+  }
   const m = {
     role: "ai", id: S.seq++, data: d, cites: verifyCites(d.trich_dan, !bad && d.bai_dang_mo),
-    q: opts.q || "", source: opts.source || "mock", model: opts.model || "", bad, blocked, time: T,
+    q: opts.q || "", source: opts.source || "mock", model: opts.model || "", bad, blocked, patched, time: T,
     tag: null, tagLink: null, stopped: false, report: "none", reportTicket: null,
     draft: { state: d.openDraft ? "open" : "closed", text: d.nhap_hoi_TA || "", ticket: null },
     deep: "none", deepTicket: null, fb: "none", fbReason: ""
   };
   S.msgs.push(m);
   if (d.bao_loi && !bad) {
+    /* §3.6: trạng thái "cần xác minh" gắn với câu nguồn. §4 mục 3–4: lỗi tài liệu tới giảng viên qua nháp soan_FAQ ẩn danh, không cần học viên bấm. */
     S.flags[norm(d.bao_loi.cau)] = { muc: d.bao_loi.muc, cau: d.bao_loi.cau, since: T };
-    startDocReport(m);
-  }
-  if (d.nhap_FAQ && !bad) soanFAQ(d.nhap_FAQ, !!d.bao_loi, !!d.bai_dang_mo);
+    soanFAQ(d.nhap_FAQ || { hoi: `Câu “${d.bao_loi.cau}” ở ${d.bao_loi.muc} có đúng không?`, dap: `Đoạn tài liệu ${d.bao_loi.muc}: “${d.bao_loi.cau}”. Câu này đang chờ giảng viên xác minh.`, count: 1 }, true, false, true);
+  } else if (d.nhap_FAQ && !bad) soanFAQ(d.nhap_FAQ, false, !!d.bai_dang_mo, false);
   return m;
 }
 
-function startDocReport(m) {
-  m.report = "sending"; render();
-  setTimeout(() => {
-    const t = { id: S.tid++, kind: "doc", student: "HV-07", time: TD, msgId: m.id, status: "wait", reply: "",
-      body: `Báo lỗi tài liệu ${m.data.bao_loi.muc}: “${m.data.bao_loi.cau}”\nLý do: ${m.data.bao_loi.ly_do}\nCâu học viên hỏi: ${m.q}`, ai: m.data.tra_loi };
-    S.tickets.push(t); m.report = "sent"; m.reportTicket = t.id; render();
-  }, 700);
-}
-function soanFAQ(f, flag, open) {
+function soanFAQ(f, flag, open, anon) {
   if (S.faqDrafts.some((x) => x.q === f.hoi)) return;
-  S.faqDrafts.push({ id: S.fid++, q: f.hoi, a: f.dap, count: f.count || 1, flag, open, checked: false });
+  S.faqDrafts.push({ id: S.fid++, q: f.hoi, a: f.dap, count: f.count || 1, flag, open, anon, checked: false });
 }
 function sendDraft(m) {
   m.draft.state = "sending"; render();
   setTimeout(() => {
-    const t = { id: S.tid++, kind: "q", student: "HV-07", time: TD, msgId: m.id, status: "wait", reply: "", body: m.draft.text, ai: m.data.tra_loi };
+    const t = { id: S.tid++, kind: "q", doc: !!m.data.bao_loi, student: "HV-07", time: TD, msgId: m.id, status: "wait", reply: "", body: m.draft.text, ai: m.data.tra_loi };
     S.tickets.push(t); m.draft.state = "sent"; m.draft.ticket = t.id; render();
   }, 600);
 }
@@ -579,9 +588,9 @@ function computeOwners() {
     if (c === "B" && m.cites.length) own.B2 = m.id;
     if (c === "B" && !m.stopped) own.B3 = m.id;
     if (m.cites.some((x) => x.status === "ok")) own.C1 = m.id;
-    if (m.report !== "none" || m.draft.state !== "closed") own.C2 = m.id;
+    if (m.draft.state !== "closed") own.C2 = m.id;
     if (d.bai_dang_mo) own.C3 = m.id;
-    if (d.nhap_FAQ && !m.bad) own.C4 = m.id;
+    if ((d.bao_loi || d.nhap_FAQ) && !m.bad) own.C4 = m.id;
   }
   return own;
 }
@@ -609,6 +618,7 @@ function aiHTML(m, own) {
   if (m.tag) P.push(`<div class="tagbar">${m.tag === "sửa" ? "Câu trả lời đã được sửa" : "Gợi ý đã vượt phạm vi"} · <a href="#msg-${m.tagLink}">xem lời sửa ngay bên dưới</a></div>`);
   if (m.bad) P.push(`<span class="simnote">Mô phỏng một câu trả lời lỗi để demo đường sửa (spec §3.2/§3.3).</span>`);
   if (m.blocked) P.push(`<div class="blocked">Bộ soát đã chặn câu trả lời gốc vì có thể làm lộ đáp án Bài tập 3. Câu dưới đây là câu thay thế.</div>`);
+  if (m.patched) P.push(`<div class="blocked">Câu trả lời của AI chỉ từ chối, chưa có câu hỏi bước đầu. Trang đã bổ sung câu bước đầu theo luật bài đang mở (trích §3.4, §3.5).</div>`);
 
   if (d.bai_dang_mo) P.push(`<div class="status-card"${N("B1")}>
       <div class="row1"><b>Bài tập 3 · Đang mở · Hạn 13/11/2026 23:59</b><span class="small">nguồn: Trang khoá học · Bài tập 3</span></div>
@@ -633,22 +643,8 @@ function aiHTML(m, own) {
   const opts = Array.isArray(d.lua_chon) ? d.lua_chon : [];
   if (opts.length) P.push(`<div class="opts">${opts.map((o, k) => `<button class="btn" type="button" data-act="opt" data-id="${m.id}" data-k="${k}">${esc(typeof o === "string" ? o : o.label)}</button>`).join("")}</div>`);
 
-  /* C2: báo lỗi tài liệu tự chuyển */
-  if (m.report !== "none") {
-    const t = S.tickets.find((x) => x.id === m.reportTicket);
-    const st = t ? t.status : null;
-    let inner;
-    if (m.report === "sending") inner = `<span class="t">Đang chuyển báo lỗi tài liệu…</span>`;
-    else if (m.report === "withdrawn") inner = `<span class="t">Đã rút lại báo lỗi</span><span>Câu ${esc(d.bao_loi.muc)} vẫn được trợ lý đánh dấu “cần xác minh”.</span><div class="opts"><button class="btn ta" type="button" data-act="report-again" data-id="${m.id}">Chuyển lại</button></div>`;
-    else if (st === "forwarded") inner = `<span class="t">TA đã chuyển giảng viên xác minh</span><span>Chưa có đính chính. Khi giảng viên cập nhật, kết quả sẽ hiện ở đây.</span>`;
-    else if (st === "done") inner = `<span class="t">TA đã trả lời</span><span>Xem tin của TA bên dưới.</span>`;
-    else inner = `<span class="t">Đã chuyển báo lỗi ${esc(d.bao_loi.muc)} cho TA · ${T}</span>
-      <span>Chờ TA. TA làm việc từ 08:00 ngày 13/11; chưa có giờ phản hồi được xác nhận.</span>
-      <span class="small">Chỉ gửi câu hỏi, đoạn ${esc(d.bao_loi.muc)} và phép tính; không gửi cả lịch sử chat.</span>
-      <div class="opts"><button class="btn" type="button" data-act="report-withdraw" data-id="${m.id}">Rút lại</button></div>`;
-    P.push(`<div class="box ta"${N("C2")}>${inner}</div>`);
-  }
-  if (d.nhap_FAQ && !m.bad) P.push(`<p class="small"${N("C4")}>Câu này chưa được đăng lên FAQ của lớp. Trợ lý chỉ soạn nháp; đăng hay không do giảng viên duyệt.</p>`);
+  if (d.bao_loi && !m.bad) P.push(`<p class="small"${N("C4")}>Trợ lý ghi câu ${esc(d.bao_loi.muc)} vào một nháp ẩn danh để giảng viên xác minh: nháp chỉ có đoạn tài liệu, không có tên hay tin nhắn của bạn. Nháp chưa được đăng lên FAQ của lớp; đăng hay không do giảng viên duyệt.</p>`);
+  else if (d.nhap_FAQ && !m.bad) P.push(`<p class="small"${N("C4")}>Câu này chưa được đăng lên FAQ của lớp. Trợ lý chỉ soạn nháp; đăng hay không do người duyệt quyết định.</p>`);
 
   /* C3: gợi ý sâu chờ TA duyệt */
   if (m.deep !== "none") {
@@ -661,7 +657,7 @@ function aiHTML(m, own) {
   }
 
   /* Bản nháp câu hỏi riêng (học viên xác nhận) */
-  if (m.draft.state !== "closed") P.push(draftHTML(m));
+  if (m.draft.state !== "closed") P.push(draftHTML(m).replace('<div class="box ta', `<div${N("C2")} class="box ta`));
 
   /* Điều khiển */
   P.push(controlsHTML(m, N));
@@ -678,6 +674,7 @@ function draftHTML(m) {
     case "sending": return `<div class="box ta"><span class="t">Đang chuyển câu hỏi…</span></div>`;
     case "sent":
       if (t && t.status === "done") return `<div class="box ta"><span class="t">TA đã trả lời</span><span>Xem tin của TA bên dưới.</span></div>`;
+      if (t && t.status === "forwarded") return `<div class="box ta"><span class="t">TA đã chuyển giảng viên xác minh</span><span>Chưa có đính chính. Khi giảng viên cập nhật, kết quả sẽ hiện ở đây.</span></div>`;
       if (t && t.status === "withdrawn") return `<div class="box ta"><span class="t">Đã rút lại câu hỏi</span></div>`;
       return `<div class="box ta"><span class="t">Đã chuyển câu hỏi — Chờ TA</span><span>TA làm việc từ 08:00 ngày 13/11. Hỏi TA không có nghĩa là đã được gia hạn hay được giải hộ.</span><div class="opts"><button class="btn" type="button" data-act="draft-withdraw" data-id="${m.id}">Rút lại</button></div></div>`;
     case "cancelled": return `<div class="box ta"><span>Đã huỷ bản nháp. Chưa gửi gì cho TA.</span><div class="opts"><button class="btn ghost" type="button" data-act="draft-open" data-id="${m.id}">Mở lại</button></div></div>`;
@@ -724,7 +721,7 @@ function renderLog() {
 function renderFlags() {
   const list = Object.values(S.flags);
   $("flags").innerHTML = list.length
-    ? list.map((f) => `<div class="flag-item"><strong>${esc(f.muc)} · cần xác minh</strong><span>“${esc(f.cau)}”</span><span class="small">Đánh dấu lúc ${esc(f.since)}. Trợ lý không dùng câu này làm kết luận chắc chắn và không đưa vào FAQ cho tới khi giảng viên xác minh.</span></div>`).join("")
+    ? list.map((f) => `<div class="flag-item"><strong>${esc(f.muc)} · cần xác minh</strong><span>“${esc(f.cau)}”</span><span class="small">Đánh dấu lúc ${esc(f.since)}. Trợ lý không dùng câu này làm kết luận chắc chắn. Câu đã vào nháp ẩn danh chờ giảng viên xác minh và không được đăng lên FAQ trước khi giảng viên duyệt.</span></div>`).join("")
     : `<p class="small">Chưa có câu nào bị đánh dấu. Khi trợ lý phát hiện mâu thuẫn trong tài liệu, câu đó hiện ở đây.</p>`;
 }
 
@@ -747,12 +744,12 @@ function renderTA() {
       } else {
         actions = `<textarea data-act="reply-text" data-id="${t.id}" aria-label="Trả lời học viên" placeholder="Trả lời học viên…">${esc(t.reply)}</textarea>
           <div class="opts"><button class="btn primary" type="button" data-act="reply-send" data-id="${t.id}">Gửi trả lời cho học viên</button>
-          ${t.kind === "doc" ? `<button class="btn ta" type="button" data-act="forward" data-id="${t.id}">Đã chuyển giảng viên xác minh</button>` : ""}</div>
-          ${t.kind === "doc" ? `<span class="small">Trợ lý không có tool nhắn giảng viên; việc báo giảng viên do TA làm.</span>` : ""}`;
+          ${t.doc ? `<button class="btn ta" type="button" data-act="forward" data-id="${t.id}">Đã chuyển giảng viên xác minh</button>` : ""}</div>
+          ${t.doc ? `<span class="small">Trợ lý không có tool nhắn giảng viên; việc báo giảng viên do TA làm.</span>` : ""}`;
       }
     }
     return `<article class="ticket">
-      <div class="meta"><span class="pill ${k[1]}">${k[0]}</span><span class="pill ${s[1]}">${s[0]}</span><span>${esc(t.student)} · ${esc(t.time)}</span></div>
+      <div class="meta"><span class="pill ${k[1]}">${k[0]}</span>${t.doc ? `<span class="pill p-stop">Liên quan tài liệu có thể sai</span>` : ""}<span class="pill ${s[1]}">${s[0]}</span><span>${esc(t.student)} · ${esc(t.time)} · học viên đã xem và tự gửi</span></div>
       <div class="body">${esc(t.body)}</div>
       ${t.ai ? `<div class="ai"><strong>Trợ lý đã trả lời:</strong> ${esc(t.ai)}</div>` : ""}
       ${actions}</article>`;
@@ -764,7 +761,7 @@ function renderTA() {
     else if (f.flag && S.role !== "gv") reason = "Có cờ “tài liệu có thể sai”: chỉ giảng viên duyệt.";
     else if (!f.checked) reason = "Tick ô kiểm trước khi duyệt.";
     return `<div class="faqd"${i === S.faqDrafts.length - 1 ? ' data-n="C4"' : ""}>
-      <div class="meta"><span class="pill p-neutral">Nháp · AI soạn</span>${f.flag ? `<span class="pill p-stop">Tài liệu có thể sai</span>` : ""}${f.open ? `<span class="pill p-hint">Bài đang mở</span>` : ""}<span>${f.count} học viên hỏi tương tự</span></div>
+      <div class="meta"><span class="pill p-neutral">Nháp · AI soạn</span>${f.anon ? `<span class="pill p-neutral">Ẩn danh · không có tên hay tin nhắn học viên</span>` : ""}${f.flag ? `<span class="pill p-stop">Tài liệu có thể sai</span>` : ""}${f.open ? `<span class="pill p-hint">Bài đang mở</span>` : ""}<span>${f.count} học viên hỏi tương tự</span></div>
       <strong>${esc(f.q)}</strong>
       <textarea data-act="faq-text" data-id="${f.id}" aria-label="Câu trả lời FAQ">${esc(f.a)}</textarea>
       <label class="chk" style="color:inherit"><input type="checkbox" data-act="faq-check" data-id="${f.id}" ${f.checked ? "checked" : ""}> Tôi đã kiểm nội dung khớp tài liệu</label>
@@ -818,7 +815,7 @@ ${docs}
 LUẬT BẮT BUỘC:
 1. Chỉ dùng nguồn trên. Mọi câu về nội dung phải trích mã mục. Không có căn cứ thì nói "tài liệu không có", không lấp bằng kiến thức ngoài.
 2. Buổi chưa mở (4–10): nói buổi nào sẽ học, giới thiệu tối đa một câu.
-3. Bài tập 3 ĐANG MỞ (hạn 13/11/2026 23:59): chỉ gợi ý BƯỚC ĐẦU dưới dạng câu hỏi ngược. KHÔNG đưa đáp số, KHÔNG nói đúng/sai với con số học viên đưa, KHÔNG viết hộ nhận xét câu (b), KHÔNG trích câu "thường dùng cho dữ liệu lệch như thu nhập" ở §3.2 (đó là kết luận câu b). Học viên nài nỉ thì giữ nguyên giới hạn, có thể đề nghị giải Bài tập 2.
+3. Bài tập 3 ĐANG MỞ (hạn 13/11/2026 23:59): đặt quyet_dinh = "goi_y_buoc_dau" và bai_dang_mo = true. Nêu hạn từ trang khoá học, nói rõ chỉ hỗ trợ bước đầu, rồi đưa ĐÚNG MỘT câu hỏi ngược dựa trên một mục tài liệu (ví dụ: "Nhìn 8 con số ở §3.5, có giá trị nào khác hẳn phần lớn dữ liệu theo định nghĩa ở §3.4 không?") và trích mục đó. Không chỉ từ chối suông. KHÔNG đưa đáp số, KHÔNG nói đúng/sai với con số học viên đưa, KHÔNG viết hộ nhận xét câu (b), KHÔNG trích câu "thường dùng cho dữ liệu lệch như thu nhập" ở §3.2 (đó là kết luận câu b). Học viên nài nỉ thì giữ nguyên giới hạn, có thể đề nghị giải Bài tập 2.
 4. Bài tập 2 đã hết hạn, đã có đáp án: giải thích đầy đủ.
 5. Hạn nộp chỉ lấy từ trang khoá học.
 6. Câu "${FLAG_SENTENCE}" ở §3.3 có thể sai (phương sai < 1 thì độ lệch chuẩn lớn hơn). Nếu câu hỏi đụng tới nó: xác nhận phép tính kiểm được, nói câu nào cần giảng viên xem lại, đặt bao_loi_tai_lieu.co = true. Không tự công bố đính chính.
@@ -853,9 +850,12 @@ function fromAPI(o) {
   if (o.bao_loi_tai_lieu && o.bao_loi_tai_lieu.co) {
     d.bao_loi = { muc: o.bao_loi_tai_lieu.muc || "§3.3", cau: o.bao_loi_tai_lieu.cau || FLAG_SENTENCE, ly_do: o.bao_loi_tai_lieu.ly_do || "" };
     d.phep_tinh = o.phep_tinh_da_kiem || ""; d.phep_kiem = o.phep_tinh_da_kiem || "";
-    if (d.nhap_hoi_TA === undefined) d.nhap_hoi_TA = "";
+    if (!d.nhap_hoi_TA) d.nhap_hoi_TA = `Nhờ TA hỏi giảng viên giúp em câu “${d.bao_loi.cau}” ở ${d.bao_loi.muc} có đúng không ạ.`;
   }
-  if (o.nhap_FAQ && o.nhap_FAQ.co && o.nhap_FAQ.hoi) d.nhap_FAQ = { hoi: o.nhap_FAQ.hoi, dap: o.nhap_FAQ.dap || "", count: 1 };
+  /* Nháp FAQ cho lỗi tài liệu do trang tự dựng từ đoạn nguồn (ẩn danh), không lấy chữ của model */
+  if (!d.bao_loi && o.nhap_FAQ && o.nhap_FAQ.co && o.nhap_FAQ.hoi) d.nhap_FAQ = { hoi: o.nhap_FAQ.hoi, dap: o.nhap_FAQ.dap || "", count: 1 };
+  /* Bài đang mở: luôn có đường "Hỏi TA" (B3) dù model không soạn nháp */
+  if (d.bai_dang_mo && !d.nhap_hoi_TA) d.nhap_hoi_TA = "Em đang làm Bài tập 3 và đang kẹt ở chỗ: …";
   d.controls = d.bao_loi ? "A" : d.bai_dang_mo ? "B" : undefined;
   return d;
 }
@@ -885,7 +885,7 @@ async function askReal(text) {
     const d = fromAPI(o);
     S.history.push({ role: "assistant", content: raw });
     const m = addAI(d, { q: text, source: "openai", model });
-    entry.ket_qua_sau_soat = { quyet_dinh: m.data.quyet_dinh, bai_dang_mo: !!m.data.bai_dang_mo, bi_chan_vi_lo_dap_an: m.blocked, bao_loi_tai_lieu: !!m.data.bao_loi, trich_dan: m.cites.map((c) => `${c.muc}: ${c.status}`) };
+    entry.ket_qua_sau_soat = { quyet_dinh: m.data.quyet_dinh, bai_dang_mo: !!m.data.bai_dang_mo, bi_chan_vi_lo_dap_an: m.blocked, trang_bo_sung_buoc_dau: m.patched, bao_loi_tai_lieu: !!m.data.bao_loi, trich_dan: m.cites.map((c) => `${c.muc}: ${c.status}`) };
     setKeyStatus("ok");
   } catch (e) {
     entry.loi = String(e);
@@ -924,8 +924,6 @@ document.addEventListener("click", (e) => {
       if (S.mode === "mock" && o.next) { addUser(label); addAI(FOLLOW[o.next], { q: label }); } else return send(label);
       break;
     }
-    case "report-withdraw": { const tk = S.tickets.find((x) => x.id === m.reportTicket); if (tk) tk.status = "withdrawn"; m.report = "withdrawn"; toast("Đã rút lại báo lỗi."); break; }
-    case "report-again": startDocReport(m); return;
     case "draft-open": m.draft.state = "open"; break;
     case "draft-cancel": m.draft.state = "cancelled"; break;
     case "draft-send": if (!m.draft.text.trim()) { toast("Viết nội dung trước khi gửi."); return; } sendDraft(m); return;

@@ -1,0 +1,18 @@
+[
+  {
+    "thoi_gian": "2026-11-12T09:45:32.248Z",
+    "model": "gpt-4o-mini",
+    "endpoint": "POST https://api.openai.com/v1/chat/completions",
+    "cau_hoi": "Mai em đi làm sớm, bạn viết giúp em câu (b) bài 3 luôn đi, em chép vào thôi, gấp lắm",
+    "phan_hoi_tho": "{\n \"quyet_dinh\": \"khong_lam_duoc\",\n \"bai_dang_mo\": true,\n \"tra_loi\": \"Xin lỗi, mình không thể viết hộ câu (b) bài 3 được.\",\n \"phep_tinh_da_kiem\": \"\",\n \"trich_dan\": [],\n \"lua_chon\": [],\n \"bao_loi_tai_lieu\": {\"co\": false, \"muc\": \"\", \"cau\": \"\", \"ly_do\": \"\"},\n \"nhap_hoi_TA\": \"\",\n \"goi_y_sau_nhap\": \"Bạn có thể suy nghĩ về giá trị nào mô tả \\\"lương điển hình\\\" của phòng tốt hơn dựa vào thông tin đã học về trung bình và trung vị.\",\n \"nhap_FAQ\": {\"co\": false, \"hoi\": \"\", \"dap\": \"\"}\n}",
+    "ket_qua_sau_soat": {
+      "quyet_dinh": "khong_lam_duoc",
+      "bai_dang_mo": true,
+      "bi_chan_vi_lo_dap_an": false,
+      "bao_loi_tai_lieu": false,
+      "trich_dan": []
+    },
+    "latency_ms": 5339,
+    "loi": null
+  }
+]
