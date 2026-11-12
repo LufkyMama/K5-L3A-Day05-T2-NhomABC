@@ -4,7 +4,6 @@
 >
 > **Một quyết định = bốn ý:** đã cân nhắc phương án nào · chọn phương án nào · vì sao · loại các phương án kia vì sao. Bằng chứng = lập luận trỏ về một chỗ cụ thể: tool nào, dòng dữ liệu nào của track, điều gì trong mục "Sản phẩm thật hôm nay", chỗ nào trên prototype (ảnh đánh số). Không chạy agent.
 
-```markdown
 # Bài nộp LAB5 — [Track] · Nhóm [tên]
 | Họ và Tên | Mã Học Viên | Việc đã làm |
 |---|---|---|
@@ -112,12 +111,98 @@ Hai kịch bản này phủ **hai hướng sai ngược nhau**: #1 là AI tin t�
 - **#6 (nhầm hạn bài 2 với bài 3):** hạn nộp có sẵn trong dữ liệu B, nên tra đúng dòng là đủ. Không âm thầm bằng #1.
 
 ## §3. Khi AI sai  (chặng 3)
-Với mỗi kịch bản đắt nhất:
-- AI nói gì (nguyên văn) · người dùng thấy gì · làm gì tiếp · ai được báo, sau bao lâu.
-- Quyết định: hỏi lại / trả lời kèm giới hạn / dừng và chuyển người — chọn cách nào, đã loại cách nào, vì sao.
-- Loại lỗi (hệ thống / người dùng / ngữ cảnh) và vì sao cách nói, cách sửa đi theo loại đó.
-- 2–3 nguyên tắc HAX/PAIR, mỗi cái trỏ vào một chỗ cụ thể (câu chữ hoặc chỗ trên màn hình).
-- Lỗi nào sửa câu chữ không cứu được (nếu có), và thiết kế cứu nó thế nào.
+
+### 3.1. Chọn cách xử lý và loại phương án khác
+
+| Phương án đã cân nhắc | #1 — Tài liệu có câu sai | #8 — Xin viết hộ bài đang mở |
+|---|---|---|
+| Hỏi lại để làm rõ yêu cầu | **Loại:** học viên đã chỉ rõ câu trong §3.3 và đưa phép tính 0,25 → 0,5. Hỏi lại không giải quyết được mâu thuẫn ở nguồn, chỉ bắt người đang đúng giải thích thêm. | **Loại:** yêu cầu “viết giúp… em chép vào” đã rõ; hỏi “bạn có muốn mình giải không?” tạo cảm giác chỉ cần đồng ý là được giải hộ. Câu hỏi gợi mở để học viên tự làm vẫn được dùng, khác với hỏi lại ý định. |
+| Trả lời kèm giới hạn | **Chọn:** xác nhận phép tính kiểm chứng được, chỉ rõ câu cần xem lại; đề nghị chuyển phần xác minh tài liệu cho TA/giảng viên. Học viên nhận được trợ giúp ngay, AI không tự công bố đính chính. | **Chọn:** từ chối viết hộ, nêu lý do từ trạng thái bài và đưa đúng một gợi ý bước đầu theo **dữ liệu A §3.4**. Giữ cơ hội học tiếp lúc tối muộn mà không cung cấp câu để chép. |
+| Dừng toàn bộ và chuyển người | **Loại việc dừng toàn bộ:** chờ TA ít nhất đến ca sáng làm học viên kẹt dù √0,25 kiểm được ngay. **Chỉ chuyển phần cần người quyết:** xác minh và sửa tài liệu. | **Loại việc chuyển mọi yêu cầu:** quy định bài đang mở đã rõ, không cần TA duyệt một câu gợi mở an toàn. Vẫn có đường hỏi TA nếu học viên muốn hoặc cần báo gợi ý quá mức. |
+
+### 3.2. Kịch bản #1 — Trích đúng nguồn nhưng nguồn sai
+
+**Loại lỗi và trách nhiệm.** Đây là **lỗi hệ thống**: dữ liệu A §3.3 có mệnh đề sai, và AI có thể biến việc “tìm thấy nguồn” thành “nguồn chắc chắn đúng”. Học viên không nhập sai; phép tính của họ còn giúp phát hiện lỗi. Vì vậy AI giải thích mâu thuẫn, không bảo học viên đọc kỹ hơn. Nếu đã trả lời sai thì nhận lỗi về câu trả lời của mình.
+
+**AI nói nguyên văn khi phát hiện mâu thuẫn:**
+
+> Bạn tính đúng: √0,25 = 0,5. Theo định nghĩa ở tài liệu buổi 3, §3.3, độ lệch chuẩn là căn bậc hai của phương sai. Nhưng cùng mục có câu “độ lệch chuẩn luôn nhỏ hơn phương sai”; ví dụ bạn đưa cho thấy câu này cần giảng viên xem lại. Mình không dùng câu đó để kết luận bạn tính sai và không tự công bố đính chính thay giảng viên. Bạn có thể xem trước câu hỏi gửi TA bên dưới. TA làm việc trở lại từ 08:00 ngày 13/11; chưa có giờ phản hồi được xác nhận.
+
+**Người dùng thấy gì và làm gì tiếp:**
+
+- **A1 — Nhãn ngay dưới câu trả lời:** “Tài liệu có điểm chưa khớp — Cần giảng viên xác minh”. Tách phần **phép tính đã kiểm** khỏi phần **câu trong tài liệu cần xem lại**; không dùng một điểm tin cậy chung như “95% đúng”, vì tìm đúng mục không chứng minh nội dung mục đó đúng.
+- **A2 — Thẻ bằng chứng:** “Buổi 3 · §3.3 · Phương sai và độ lệch chuẩn”, hiện định nghĩa và câu gốc “Vì là căn bậc hai, độ lệch chuẩn luôn nhỏ hơn phương sai.” Đặt cạnh phép kiểm `0,5 × 0,5 = 0,25` để học viên tự đối chiếu. Đây là trích đoạn cần xác minh, không gắn nhãn “đã được giảng viên duyệt”.
+- **A3 — Điều khiển:** “Xem trước câu hỏi gửi TA”, “Báo câu trả lời sai”, “Học tiếp phần khác”. Bản xem trước chứa câu hỏi, phép tính, đoạn §3.3 đang mâu thuẫn; học viên sửa nội dung hoặc hủy trước khi bấm “Gửi TA”. Không gửi toàn bộ lịch sử chat mặc định.
+- **Nếu học viên không bấm gì:** chưa chuyển câu hỏi, chưa ai được báo; nhãn cần xác minh vẫn nằm cạnh câu trả lời. AI không tự đăng nội dung này thành FAQ.
+
+**Đường sửa khi AI đã lỡ nói “theo §3.3, bạn tính sai”.** Học viên bấm “Báo câu trả lời sai” hoặc nhắn lại phép tính. AI đối chiếu ngay định nghĩa và ví dụ, rồi nói:
+
+> Xin lỗi, câu trả lời trước của mình đã kết luận sai về phép tính của bạn. √0,25 = 0,5 là đúng. Mình đã dựa vào câu “luôn nhỏ hơn” ở §3.3 mà chưa kiểm tra mâu thuẫn. Câu đó cần giảng viên xem lại; mình chưa thể coi nó là căn cứ để bác phép tính của bạn. Bạn có thể xem trước câu hỏi gửi TA để nhờ xác minh tài liệu.
+
+Tin cũ được gắn **“Câu trả lời đã được sửa”**, liên kết tới lời sửa ngay bên cạnh, thay vì âm thầm đổi nội dung. Học viên không phải mở hội thoại mới hoặc tự tìm lại mã mục. Báo lỗi chỉ tạo bản nháp; việc gửi TA vẫn theo §3.4.
+
+### 3.3. Kịch bản #8 — Gợi ý đúng nguồn nhưng làm lộ đáp án
+
+**Loại lỗi và trách nhiệm.** Đây là **lỗi ngữ cảnh** nếu cơ chế “giảng bằng đoạn trích đúng tài liệu” vẫn chạy đúng thiết kế nhưng bỏ qua việc **Bài tập 3 đang mở**: câu về “thu nhập” ở A §3.2 trở thành lời giải cho A §3.5(b). Nếu hệ thống đã có quy tắc cấm giải hộ mà vẫn xuất đáp án thì còn là lỗi thực thi của hệ thống. Yêu cầu xin chép là ngoài phạm vi, không phải lỗi nhập liệu của người dùng; AI không trách móc hay nhận xét năng lực học viên.
+
+**AI nói nguyên văn:**
+
+> Mình hiểu bạn đang gấp. Bài tập 3 còn mở đến 13/11/2026 23:59 theo trang khoá học, nên mình chỉ hỗ trợ bước đầu và không viết hộ câu (b). Nhìn 8 con số ở §3.5, có giá trị nào khác hẳn phần lớn dữ liệu theo định nghĩa ở §3.4 không? Bạn thử tìm trước nhé.
+
+**Người dùng thấy gì và làm gì tiếp:**
+
+- **B1 — Thẻ trạng thái:** “Bài tập 3 · Đang mở · Hạn 13/11/2026 23:59”, nguồn **Trang khoá học · Bài tập 3**. Ngay dưới là nhãn “Chỉ gợi ý bước đầu”. Đây là giới hạn hỗ trợ đã biết, không phải AI thiếu tự tin vào đáp án.
+- **B2 — Thẻ bằng chứng cho gợi ý:** “Buổi 3 · §3.4: Giá trị khác hẳn phần lớn dữ liệu.” Không tự ghép đoạn “thu nhập” ở §3.2 vào câu trả lời hay thẻ gợi ý; cũng không nêu hộ giá trị ngoại lai hoặc chọn hộ con số mô tả lương điển hình. Học viên vẫn có quyền tự đọc tài liệu gốc.
+- **B3 — Điều khiển:** ô “Em đang nghĩ như thế này…”, nút “Dừng gợi ý”, “Hỏi TA”, “Gợi ý đang lộ đáp án”. Học viên tự viết cách nghĩ; AI có thể nhắc cách tự kiểm nhưng không xác nhận kết luận của câu (b), viết lại thành câu nộp bài, hoặc tăng dần gợi ý thành lời giải. “Dừng gợi ý” kết thúc hỗ trợ ở bước hiện tại.
+- **Nếu vẫn xin “chỉ cho đáp án lần này”:** giữ giới hạn đã nêu, không lặp gợi ý bằng cách diễn đạt ngày càng lộ lời giải. Nếu muốn học khái niệm bằng bài đã có đáp án, có thể chuyển sang Bài tập 2, kiểm tra trạng thái từ B trước khi giải thích đầy đủ.
+- **Nếu học viên không làm gì:** không sinh thêm gợi ý, không tự chuyển TA hay đăng FAQ. Hạn nộp giữ nguyên; việc hỏi TA không phải yêu cầu gia hạn đã được chấp thuận.
+
+**Đường sửa khi AI đã lỡ lộ lời giải.** Khi học viên bấm “Gợi ý đang lộ đáp án” hoặc hệ thống phát hiện, dừng phần nội dung chưa gửi và nói:
+
+> Xin lỗi, gợi ý trước của mình đã đi quá mức hỗ trợ cho bài đang mở. Mình sẽ dừng đưa thêm lời giải. Phần bạn đã đọc thì không thể hoàn tác; mình có thể giúp bạn quay lại cách tự kiểm hoặc soạn câu hỏi để bạn xem trước rồi gửi TA.
+
+Gợi ý cũ được gắn **“Gợi ý đã vượt phạm vi”**; lời sửa không lặp lại đáp án. Không gọi việc ẩn tin là “thu hồi kiến thức”, không hứa đã khắc phục hoàn toàn, không quy lỗi hay tự phạt học viên. Nếu học viên chọn báo TA, bản xem trước chỉ kèm phần hội thoại liên quan để TA hiểu lỗi của trợ lý.
+
+### 3.4. Ai được báo, khi nào, thấy gì?
+
+Đây là luồng **đề xuất cho sản phẩm**, dùng `chuyen_TA` của track; bài nộp không thực hiện gửi thật. Soạn/xem trước là bước giao diện trước khi gọi tool, không phải một tool gửi mới.
+
+| Trạng thái | Học viên thấy gì | Ai nhận, nhận lúc nào, nhận gì |
+|---|---|---|
+| Chưa xác nhận gửi | “Bản nháp — Chưa gửi TA”, cho sửa hoặc hủy. | Chưa ai nhận. Với #1, nháp gồm câu hỏi, A §3.3 và phép tính mâu thuẫn; với #8, gồm chỗ đang kẹt và gợi ý đã nhận, hoặc đoạn AI vượt phạm vi nếu đang báo lỗi. |
+| Đang chuyển / chuyển thành công | Khi đang chuyển: “Đang chuyển câu hỏi”. Chỉ sau kết quả thành công của tool mới hiện “Đã chuyển câu hỏi — Chờ TA; TA làm việc từ 08:00 ngày 13/11”. | Câu hỏi vào hàng chờ TA ngay khi chuyển thành công. Nếu gửi lúc 23:00 ngày 12/11, ca TA kế tiếp bắt đầu **sau 9 giờ**; không đồng nghĩa TA đọc hoặc trả lời ngay 08:00. TA thấy nội dung học viên đã duyệt và thời điểm gửi. |
+| Gửi thất bại / chưa xác nhận được kết quả | Thất bại: “Chưa gửi được — Giữ lại nội dung để thử lại hoặc sao chép hỏi TA”. Nếu mất kết nối và chưa rõ kết quả: “Chưa xác nhận đã chuyển”; kiểm tra trạng thái trước khi gửi lại để tránh trùng. | Không khẳng định TA đã nhận khi chưa có xác nhận; không biến lỗi gửi thành thông báo thành công. |
+| Đã chuyển nhưng chưa có phản hồi | Giữ nhãn “Chờ TA”, cho học tiếp phần khác. Không hứa giờ giải quyết vì dữ liệu B chỉ có giờ làm việc. | #1: TA nhận để chuyển giảng viên xác minh câu §3.3; việc báo giảng viên do **TA thực hiện**, vì không có tool nhắn giảng viên trực tiếp. #8: TA hỗ trợ phương pháp hoặc xem lại gợi ý của AI; không được hiểu là đã cho phép giải hộ. |
+
+Chỉ hiển thị phản hồi/đính chính đã xác nhận khi TA hoặc giảng viên thực sự cập nhật. Hết ca mà chưa xử lý thì tiếp tục ghi đang chờ, không tự suy ra đồng ý, không tự đăng FAQ và không đổi hạn bài. Chi phí chờ ở #1 được giảm bằng việc giải thích phép tính ngay; ở #8 bằng gợi ý bước đầu ngay.
+
+### 3.5. Ba nguyên tắc HAX/PAIR và chỗ thể hiện cụ thể
+
+| Nguyên tắc | Áp dụng vào #1 | Áp dụng vào #8 |
+|---|---|---|
+| **HAX G10 — Thu hẹp phạm vi khi nghi ngờ** ([nguồn](https://www.microsoft.com/en-us/haxtoolkit/guideline/scope-services-when-in-doubt/)) | Câu “không dùng câu đó để kết luận bạn tính sai” và nhãn **A1**: chỉ khẳng định phép tính đã kiểm; chuyển phần xác minh nguồn cho người có trách nhiệm. | **B1/B2** giới hạn hỗ trợ ở bước đầu. Nếu không đọc được trạng thái bài từ B, chưa sinh gợi ý theo số liệu đề; nói rõ chưa xác minh được và đề nghị hỏi TA, không đoán bài đã đóng. |
+| **HAX G9 — Sửa dễ dàng** ([nguồn](https://www.microsoft.com/en-us/haxtoolkit/guideline/support-efficient-correction/)) | Nút “Báo câu trả lời sai” tại **A3**, lời sửa đặt cạnh tin cũ; bản nháp gửi TA sửa được, không bắt kể lại toàn bộ. | Nút “Gợi ý đang lộ đáp án” tại **B3** dừng hỗ trợ vượt phạm vi ngay; lời sửa nhận trách nhiệm và cho quay về tự kiểm. Không đưa nút hoàn tác giả cho gợi ý đã đọc. |
+| **PAIR — Errors + Graceful Failure** ([nguồn](https://pair.withgoogle.com/guidebook-v2/chapter/errors-failing/)) | Nhận lỗi hệ thống khi đã kết luận sai; **A2 + luồng §3.4** cho xem căn cứ và chuyển đúng vấn đề, kèm giới hạn về giờ TA. | Nhận diện lỗi ngữ cảnh: đúng tài liệu vẫn có thể sai với bài đang mở. **B3** cho dừng hoặc hỏi người, trong khi gợi ý bước đầu giúp học viên tiếp tục học. |
+
+Chọn nhãn mô tả **điều đã biết, điều cần xác minh và hành động kế tiếp** thay cho phần trăm tin cậy: fixture không có dữ liệu hiệu chuẩn, còn hai ca có thể tìm đúng nguồn mà vẫn gây hại. Các mã A/B sẽ được gắn vào ảnh prototype ở §5.
+
+### 3.6. Những lỗi sửa câu chữ không cứu được
+
+| Lỗi | Vì sao câu chữ không đủ | Yêu cầu thiết kế mang sang chặng 4–5 |
+|---|---|---|
+| **#1 — Nguồn có mệnh đề sai** | Thêm “theo tài liệu” hoặc “có thể” trước một kết luận sai vẫn làm học viên học sai. Có trích dẫn không có nghĩa đã được kiểm chứng. | Đề xuất lưu trạng thái **“cần xác minh” theo đúng câu/đoạn nguồn** sau khi phát hiện mâu thuẫn; không dùng đoạn đó làm kết luận chắc chắn hay đưa vào FAQ trong lúc chờ. Giữ các định nghĩa không mâu thuẫn để học tiếp. TA/giảng viên xác minh bằng quy trình người thực hiện; AI không có tool tự sửa tài liệu. Nhãn trên chat phải gắn với nguồn, không chỉ với một lần trả lời. |
+| **#8 — Gợi ý làm lộ đáp án** | Mở đầu bằng “mình chỉ gợi ý” nhưng sau đó chép câu về thu nhập ở §3.2 vẫn lộ lời giải. Gửi rồi thì lời xin lỗi không đảo lại được. | Kiểm tra trạng thái bài từ B **trước khi soạn**, rồi soát toàn bộ gợi ý **trước khi hiển thị/gửi qua `goi_y_bai_tap`**; không phát dần bản nháp chưa soát. Soát cả đoạn trích và chuỗi gợi ý đã gửi, tránh chia nhỏ lời giải qua nhiều lượt. Ca #8 dùng câu hỏi bước đầu đã viết ở §3.3; nếu chưa bảo đảm giới hạn thì dừng nội dung đó và cho hỏi TA. Học viên bấm “đồng ý cho đáp án” không vượt được quy tắc bài đang mở. |
+
+Các bước lưu trạng thái nguồn và soát gợi ý ở trên là **thiết kế bổ sung**, chưa phải khả năng có sẵn trong bảng tool hoặc cơ chế đã được kiểm thử. Nếu giảng viên xác nhận cần đính chính cho cả lớp, việc duyệt và dùng `dang_FAQ` được quyết định ở §4; AI không tự đăng khi mới phát hiện mâu thuẫn.
+
+### 3.7. Đối chiếu bốn đường trải nghiệm
+
+| Đường | Chỗ thể hiện trong thiết kế |
+|---|---|
+| **Happy path** | Đối chiếu #11: Bài tập 2 đã hết hạn và có đáp án trong B → được giải thích đầy đủ theo **dữ liệu A §3.1**, không áp giới hạn của Bài tập 3 cho mọi bài. |
+| **Low-confidence** | Đối chiếu #5: hỏi đúng một câu “Bạn hỏi ‘dữ liệu lệch’ ở §3.2 hay ‘độ lệch chuẩn’ ở §3.3?”; chưa chọn hộ ý định để giảng. |
+| **Failure / không đủ căn cứ** | #1: có nguồn nhưng mâu thuẫn → **A1/A2**, trả lời phần đã kiểm và cho chuyển xác minh. #8: nếu chưa xác minh được trạng thái bài, không đoán rồi gửi gợi ý. |
+| **Correction** | Nhánh sửa ở §3.2 và §3.3: nhận lỗi cụ thể, đánh dấu tin cũ, dừng hành vi gây hại, giữ đường học tiếp và bản xem trước gửi TA. |
 
 ## §4. Mức tự chủ  (chặng 4)
 Với mỗi tool:
@@ -140,4 +225,3 @@ Thêm:
 
 ## §7. Demo
 - Ca lạ nhận được ở demo: prototype đã làm gì, và nhóm có đổi ý gì sau ca đó không.
-```
